@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sakay Cebu – Metro Cebu commuter guide</title>
+<meta name="description" content="Free commuter guide for Metro Cebu: jeepney codes, bus terminals, fares and commute directions on an interactive map.">
+<meta name="theme-color" content="#0b57d0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚌%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://tile.openstreetmap.org">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="css/styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="app-header">
+  <h1 class="brand">Sakay Cebu <small>Metro Cebu commuter guide</small></h1>
+</header>
+
+<nav class="tabs" id="tabs" aria-label="Main sections">
+  <a id="tab-map" href="#map" aria-current="page"><span aria-hidden="true">🗺️</span><span>Map</span></a>
+  <a id="tab-jeepney" href="#jeepney"><span aria-hidden="true">🚐</span><span>Jeepney</span></a>
+  <a id="tab-bus" href="#bus"><span aria-hidden="true">🚌</span><span>Bus</span></a>
+  <a id="tab-places" href="#places"><span aria-hidden="true">📍</span><span>Places</span></a>
+  <a id="tab-fares" href="#fares"><span aria-hidden="true">💰</span><span>Fares</span></a>
+  <a id="tab-about" href="#about"><span aria-hidden="true">ℹ️</span><span>About</span></a>
+</nav>
+
+<main id="main" tabindex="-1">
+  <noscript><p class="notice">JavaScript is required for this commuter guide.</p></noscript>
+
+  <section id="panel-map" class="panel panel-map" aria-labelledby="h-map">
+    <h2 id="h-map" class="sr-only" tabindex="-1">Map</h2>
+    <div class="map-layout">
+      <div class="map-wrap">
+        <div id="map-canvas" class="map" role="region" aria-label="Interactive map of Metro Cebu"></div>
+        <div id="map-skeleton" class="map-skeleton" aria-hidden="true"></div>
+        <p id="map-fallback" class="notice" hidden>The map could not load. Showing the route list only. Check your connection and reload.</p>
+      </div>
+      <aside id="sheet" class="sheet" data-state="collapsed" aria-label="Routes and map layers">
+        <button id="sheet-handle" class="sheet-handle" type="button" aria-expanded="false" aria-controls="sheet-body">
+          <span>Routes &amp; layers</span><span class="chev" aria-hidden="true">▲</span>
+        </button>
+        <div id="sheet-body" class="sheet-body">
+          <label for="search" class="sr-only">Search by code, destination or landmark</label>
+          <input id="search" type="search" placeholder="Search code, destination or landmark" autocomplete="off">
+          <fieldset class="layers">
+            <legend>Show on map</legend>
+            <div class="chips">
+              <label class="chk"><input type="checkbox" data-layer="jeepney" checked> Jeepney</label>
+              <label class="chk"><input type="checkbox" data-layer="bus" checked> Bus</label>
+              <label class="chk"><input type="checkbox" data-layer="terminals" checked> Terminals</label>
+              <label class="chk"><input type="checkbox" data-layer="places" checked> Places</label>
+            </div>
+          </fieldset>
+          <button id="clear-selection" class="btn" type="button" disabled>Clear selection</button>
+          <p class="hint">Routes are approximate. Confirm with the driver or barker.</p>
+          <h3 class="list-title">Routes</h3>
+          <ul id="route-list" class="route-list"></ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="panel-jeepney" class="panel page" aria-labelledby="h-jeepney" hidden>
+    <h2 id="h-jeepney" tabindex="-1">Jeepney</h2>
+    <div id="jeepney-content" class="coming-soon"><p>Coming soon: jeepney codes and routes.</p></div>
+  </section>
+
+  <section id="panel-bus" class="panel page" aria-labelledby="h-bus" hidden>
+    <h2 id="h-bus" tabindex="-1">Bus</h2>
+    <div id="bus-content" class="coming-soon"><p>Coming soon: bus terminals and routes.</p></div>
+  </section>
+
+  <section id="panel-places" class="panel page" aria-labelledby="h-places" hidden>
+    <h2 id="h-places" tabindex="-1">Places</h2>
+    <div id="places-content" class="coming-soon"><p>Coming soon: popular destinations with step-by-step sakay directions.</p></div>
+  </section>
+
+  <section id="panel-fares" class="panel page" aria-labelledby="h-fares" hidden>
+    <h2 id="h-fares" tabindex="-1">Fares</h2>
+    <div id="fares-content" class="coming-soon"><p>Coming soon: fare table and calculator.</p></div>
+  </section>
+
+  <section id="panel-about" class="panel page" aria-labelledby="h-about" hidden>
+    <h2 id="h-about" tabindex="-1">About</h2>
+    <p><strong>Disclaimer:</strong> Routes are approximate. Confirm with the driver or barker. Entries marked “Unverified” still need community confirmation.</p>
+    <p>Map data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap contributors</a>. Map library: <a href="https://leafletjs.com" rel="noopener">Leaflet</a>.</p>
+    <p>Data sources and a link for suggesting corrections: coming soon.</p>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <p>Last updated: <time datetime="2026-10-20">2026-10-20</time> · Fares effective: <span id="fare-date">not loaded yet</span></p>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
