@@ -1,4 +1,4 @@
-/* Sakay Cebu – mobile-first styles. System fonts only. */
+/* Komyut – mobile-first styles. System fonts only. */
 :root {
   --bg: #ffffff; --surface: #f3f5f8; --text: #16191d; --muted: #454c55;
   --border: #c4cad3; --primary: #0b57d0; --on-primary: #ffffff;
@@ -168,3 +168,90 @@ main { grid-area: main; min-height: 0; position: relative; overflow: hidden; }
 .no-map .sheet { position: static; transform: none !important; max-height: none; border-radius: 0; box-shadow: none; }
 .no-map .sheet-handle { display: none; }
 .no-map .sheet[data-state] .sheet-body { visibility: visible; padding-top: 1rem; }
+
+/* Phase 2: Jeepney tab, cards, popups */
+.search {
+  width: 100%; min-height: 44px; padding: .5rem .75rem; font: inherit;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text);
+}
+.page .chips { gap: .5rem; margin: .75rem 0; }
+.chip {
+  min-height: 44px; padding: .25rem 1rem; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); font-weight: 700; }
+.status { color: var(--muted); margin: .5rem 0; font-size: .9rem; }
+.cards {
+  list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+.card { padding: .75rem 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.card.state { grid-column: 1 / -1; }
+.card-head { display: flex; align-items: center; gap: .6rem; }
+.card-title { margin: 0; font-size: 1rem; }
+.card p { margin: .35rem 0; }
+.card-meta { color: var(--muted); font-size: .9rem; }
+.card-foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
+.skeleton-card {
+  min-height: 120px; background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+  background-size: 200% 100%; animation: shimmer 1.4s linear infinite;
+}
+.popup > * { margin: .2rem 0; }
+.popup .pill { margin-right: .4rem; }
+.popup-note { font-size: .75rem; color: #444444; }
+.leaflet-popup-content .badge--verified { color: #1b6e2d; }
+.leaflet-popup-content .badge--community { color: #8a5a00; }
+.leaflet-popup-content .badge--unverified { color: #b3261e; }
+
+/* Phase 3: Bus tab, map pins */
+.section-title { margin: 1.25rem 0 .5rem; font-size: 1.1rem; }
+.pin { background: transparent; border: 0; }
+.pin span {
+  display: flex; align-items: center; justify-content: center; width: 44px; height: 44px;
+  border-radius: 50%; background: #0b57d0; border: 2px solid #ffffff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .45); font-size: 22px;
+}
+
+/* Phase 4: Places tab */
+.pill--line { background: #455a64; color: #ffffff; min-width: 0; font-size: .8rem; margin: 0 .25rem; }
+.card-sub { color: var(--muted); font-size: .9rem; margin: .1rem 0 .4rem; }
+.acc-title { margin: .75rem 0 .25rem; font-weight: 600; }
+.acc { margin-top: .5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+.acc summary { min-height: 44px; padding: .5rem .75rem; display: flex; align-items: center; cursor: pointer; font-weight: 600; }
+.steps { margin: 0; padding: .25rem 1rem 1rem 2rem; }
+.step { margin: .6rem 0; }
+.step .mode { font-weight: 700; }
+.step .fare { display: block; color: var(--muted); font-size: .85rem; }
+
+/* Phase 5: Fares tab */
+.table-wrap { overflow-x: auto; }
+.fare-table { width: 100%; min-width: 32rem; border-collapse: collapse; }
+.fare-table caption { text-align: left; font-weight: 600; padding: .5rem 0; }
+.fare-table th, .fare-table td { padding: .6rem .75rem; border-bottom: 1px solid var(--border); text-align: left; }
+.fare-table thead th { background: var(--surface); }
+.calc { margin-top: 1.5rem; padding: 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.calc .section-title { margin-top: 0; }
+.field { margin: .75rem 0; border: 0; padding: 0; }
+.field label:not(.chk), .field legend { display: block; font-weight: 600; margin-bottom: .25rem; padding: 0; }
+.calc select, .calc input[type="number"] {
+  width: 100%; min-height: 44px; padding: .5rem .75rem; font: inherit;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text);
+}
+.result { margin-top: 1rem; padding: .75rem 1rem; border-left: 4px solid var(--primary); border-radius: 8px; background: var(--bg); }
+.result p { margin: .25rem 0; }
+.result .big { font-size: 1.6rem; font-weight: 700; }
+.fare-info h3 { margin: 1.25rem 0 .25rem; font-size: 1.05rem; }
+.fare-info p { margin: .25rem 0; }
+
+/* Phase 6: polish */
+.leaflet-touch .leaflet-bar a { width: 44px; height: 44px; line-height: 44px; }
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out { font-size: 24px; }
+@media (prefers-color-scheme: dark) {
+  .leaflet-tile-pane { filter: brightness(.78) contrast(1.05); }
+}
+.about h3 { margin: 1.25rem 0 .25rem; font-size: 1.05rem; }
+.about p, .about li { margin: .4rem 0; }
+.about ul { padding-left: 1.25rem; }
+.about .legend { list-style: none; padding-left: 0; }
+.about .legend li { margin: .6rem 0; }
+.page a { text-underline-offset: 2px; }
