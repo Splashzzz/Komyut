@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Komyut diagnostics</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 1rem; line-height: 1.4; }
+  button { min-height: 44px; padding: .5rem 1rem; font: inherit; }
+  pre { white-space: pre-wrap; word-break: break-word; background: #f3f5f8; color: #16191d; padding: .75rem; border-radius: 8px; }
+</style>
+</head>
+<body>
+<h1>Komyut diagnostics</h1>
+<p>Wait for “DONE”, then tap Copy report and paste it into the chat.</p>
+<button id="copy" type="button">Copy report</button>
+<pre id="out">Running…</pre>
+<script>
+(async () => {
+  const out = document.getElementById('out');
+  const lines = [];
+  const log = (s) => { lines.push(s); out.textContent = lines.join('\n'); };
+  const base = location.pathname.replace(/[^/]*$/, '');
+
+  document.getElementById('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(out.textContent); alert('Copied'); }
+    catch (e) {
+      const r = document.createRange(); r.selectNodeContents(out);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      alert('Select and copy the text manually');
+    }
+  });
+
+  const FILES = [
+    ['index.html', 1, 'html'], ['css/styles.css', 1, 'css'],
+    ['js/app.js', 1, 'js'], ['js/map.js', 1, 'js'],
+    ['js/data.js', 2, 'js'], ['js/jeepney.js', 2, 'js'], ['data/jeepney.json', 2, 'json'],
+    ['js/bus.js', 3, 'js'], ['data/bus.json', 3, 'json'],
+    ['js/places.js', 4, 'js'], ['data/places.json', 4, 'json'], ['data/places-2.json', 4, 'json'],
+    ['js/fares.js', 5, 'js'], ['data/fares.json', 5, 'json'],
+    ['data/jeepney-2.json', 6, 'json'],
+  ];
+
+  async function get(path) {
+    try {
+      const r = await fetch(base + path, { cache: 'no-store' });
+      const text = await r.text();
+      return { status: r.status, type: r.headers.get('content-type') || '', text };
+    } catch (e) {
+      return { status: 'ERR ' + e.message, type: '', text: '' };
+    }
+  }
+
+  function jsSyntax(code) {
+    try {
+      new Function(code.replace(/^import .*$/gm, '').replace(/^export (default )?/gm, ''));
+      return 'ok';
+    } catch (e) {
+      return e.name + ': ' + e.message;
+    }
+  }
+
+  log('URL: ' + location.href);
+  log('Base path: ' + base);
+  log('UA: ' + navigator.userAgent);
+  try {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    log('Service workers registered: ' + regs.length);
+  } catch (e) {
+    log('Service workers: n/a');
+  }
+  log('');
+
+  let indexText = '';
+  for (const [path, phase, kind] of FILES) {
+    const r = await get(path);
+    if (path === 'index.html') indexText = r.text;
+    const size = r.text.length + ' B';
+    let note = '';
+    if (r.status !== 200) {
+      log(`[MISSING] ${path} (phase ${phase})  status ${r.status}`);
+      continue;
+    }
+    if (kind === 'js') {
+      if (!/javascript/i.test(r.type)) note += `  WRONG TYPE: ${r.type}`;
+      if (/^\s*</.test(r.text)) note += '  LOOKS LIKE HTML, NOT JS';
+      note += '  syntax: ' + jsSyntax(r.text);
+    } else if (kind === 'json') {
+      try { JSON.parse(r.text); note += '  json: ok'; }
+      catch (e) { note += '  JSON ERROR: ' + e.message; }
+    }
+    log(`[found] ${path} (phase ${phase})  ${r.status}  ${size}${note}`);
+  }
+
+  log('');
+  if (indexText) {
+    const doc = new DOMParser().parseFromString(indexText, 'text/html');
+    const refs = [...doc.querySelectorAll('script[src],link[href]')].map((n) => n.getAttribute('src') || n.getAttribute('href'));
+    log('index.html references: ' + refs.join(', '));
+    const need = ['panel-map', 'map-canvas', 'map-skeleton', 'map-fallback', 'sheet', 'sheet-handle', 'sheet-body',
+      'search', 'clear-selection', 'route-list', 'toast',
+      'tab-map', 'tab-jeepney', 'tab-bus', 'tab-places', 'tab-fares', 'tab-about',
+      'panel-jeepney', 'panel-bus', 'panel-places', 'panel-fares', 'panel-about',
+      'h-map', 'h-jeepney', 'h-bus', 'h-places', 'h-fares', 'h-about'];
+    const missing = need.filter((id) => !doc.getElementById(id));
+    log('Missing ids in index.html: ' + (missing.length ? missing.join(', ') : 'none'));
+  } else {
+    log('index.html could not be read, so ids were not checked.');
+  }
+
+  log('');
+  await new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    s.onload = () => { log('Leaflet: loaded, version ' + (window.L && window.L.version)); resolve(); };
+    s.onerror = () => { log('Leaflet: FAILED to load (network blocked?)'); resolve(); };
+    document.head.append(s);
+  });
+  await new Promise((resolve) => {
+    const img = new Image();
+    const timer = setTimeout(() => { log('OSM tile: timed out'); resolve(); }, 8000);
+    img.onload = () => { clearTimeout(timer); log('OSM tile: loaded'); resolve(); };
+    img.onerror = () => { clearTimeout(timer); log('OSM tile: FAILED'); resolve(); };
+    img.src = 'https://tile.openstreetmap.org/12/3457/1931.png';
+  });
+
+  log('');
+  log('DONE');
+})();
+</script>
+</body>
+</html>
