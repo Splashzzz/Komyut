@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sakay Cebu – Metro Cebu commuter guide</title>
+<title>Komyut – Metro Cebu commuter guide</title>
 <meta name="description" content="Free commuter guide for Metro Cebu: jeepney codes, bus terminals, fares and commute directions on an interactive map.">
 <meta name="theme-color" content="#0b57d0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚌%3C/text%3E%3C/svg%3E">
@@ -18,7 +18,7 @@
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="app-header">
-  <h1 class="brand">Sakay Cebu <small>Metro Cebu commuter guide</small></h1>
+  <h1 class="brand">Komyut <small>Metro Cebu commuter guide</small></h1>
 </header>
 
 <nav class="tabs" id="tabs" aria-label="Main sections">
@@ -68,34 +68,110 @@
 
   <section id="panel-jeepney" class="panel page" aria-labelledby="h-jeepney" hidden>
     <h2 id="h-jeepney" tabindex="-1">Jeepney</h2>
-    <div id="jeepney-content" class="coming-soon"><p>Coming soon: jeepney codes and routes.</p></div>
+    <div id="jeepney-content">
+      <p class="hint">Routes are approximate. Confirm with the driver or barker.</p>
+      <label for="jeepney-search" class="sr-only">Search jeepney routes by code, destination or landmark</label>
+      <input id="jeepney-search" class="search" type="search" placeholder="Search code, destination or landmark" autocomplete="off">
+      <div class="chips" role="group" aria-label="Filter by jeepney type">
+        <button type="button" class="chip" data-jtype="all" aria-pressed="true">All</button>
+        <button type="button" class="chip" data-jtype="traditional" aria-pressed="false">Traditional</button>
+        <button type="button" class="chip" data-jtype="modern" aria-pressed="false">Modern</button>
+      </div>
+      <p id="jeepney-status" class="status" role="status" aria-live="polite">Loading jeepney routes…</p>
+      <ul id="jeepney-list" class="cards"></ul>
+    </div>
   </section>
 
   <section id="panel-bus" class="panel page" aria-labelledby="h-bus" hidden>
     <h2 id="h-bus" tabindex="-1">Bus</h2>
-    <div id="bus-content" class="coming-soon"><p>Coming soon: bus terminals and routes.</p></div>
+    <div id="bus-content">
+      <p class="hint">Routes are approximate. Confirm with the driver or barker.</p>
+      <p id="bus-status" class="status" role="status" aria-live="polite">Loading bus data…</p>
+      <h3 class="section-title">Terminals</h3>
+      <ul id="bus-terminals" class="cards"></ul>
+      <div id="bus-routes-section">
+        <h3 class="section-title">City bus routes</h3>
+        <ul id="bus-routes" class="cards"></ul>
+      </div>
+    </div>
   </section>
 
   <section id="panel-places" class="panel page" aria-labelledby="h-places" hidden>
     <h2 id="h-places" tabindex="-1">Places</h2>
-    <div id="places-content" class="coming-soon"><p>Coming soon: popular destinations with step-by-step sakay directions.</p></div>
+    <div id="places-content">
+      <p class="hint">Directions use route codes from this guide. Routes are approximate. Confirm with the driver or barker.</p>
+      <label for="places-search" class="sr-only">Search places by name, category or city</label>
+      <input id="places-search" class="search" type="search" placeholder="Search a mall, park, church or landmark" autocomplete="off">
+      <div id="places-chips" class="chips" role="group" aria-label="Filter by category"></div>
+      <p id="places-status" class="status" role="status" aria-live="polite">Loading places…</p>
+      <ul id="places-list" class="cards"></ul>
+    </div>
   </section>
 
   <section id="panel-fares" class="panel page" aria-labelledby="h-fares" hidden>
     <h2 id="h-fares" tabindex="-1">Fares</h2>
-    <div id="fares-content" class="coming-soon"><p>Coming soon: fare table and calculator.</p></div>
+    <div id="fares-content">
+      <p id="fares-status" class="status" role="status" aria-live="polite">Loading fares…</p>
+      <div id="fares-table"></div>
+      <section id="fare-calc" class="calc" aria-labelledby="calc-title" hidden>
+        <h3 id="calc-title" class="section-title">Fare calculator</h3>
+        <div class="field">
+          <label for="calc-mode">Vehicle</label>
+          <select id="calc-mode"></select>
+        </div>
+        <div class="field">
+          <label for="calc-from">From</label>
+          <select id="calc-from"></select>
+        </div>
+        <div class="field">
+          <label for="calc-to">To</label>
+          <select id="calc-to"></select>
+        </div>
+        <div class="field">
+          <label for="calc-km">Or enter the road distance (km)</label>
+          <input id="calc-km" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Optional">
+        </div>
+        <fieldset class="field">
+          <legend>Fare type</legend>
+          <label class="chk"><input type="radio" name="calc-type" value="regular" checked> Regular</label>
+          <label class="chk"><input type="radio" name="calc-type" value="discounted"> Discounted (<span id="calc-pct">20</span>% off)</label>
+        </fieldset>
+        <div id="calc-result" class="result" role="status" aria-live="polite"></div>
+      </section>
+      <div id="fares-info" class="fare-info"></div>
+    </div>
   </section>
 
   <section id="panel-about" class="panel page" aria-labelledby="h-about" hidden>
     <h2 id="h-about" tabindex="-1">About</h2>
     <p><strong>Disclaimer:</strong> Routes are approximate. Confirm with the driver or barker. Entries marked “Unverified” still need community confirmation.</p>
     <p>Map data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap contributors</a>. Map library: <a href="https://leafletjs.com" rel="noopener">Leaflet</a>.</p>
-    <p>Data sources and a link for suggesting corrections: coming soon.</p>
+    <div class="about">
+      <h3>What this is</h3>
+      <p>Komyut is a free commuter guide for Metro Cebu: jeepney codes, bus terminals and routes, popular places with sakay directions, and fare estimates. It has no accounts, ads, cookies or analytics. Your browser does fetch the map library from cdnjs and map tiles from OpenStreetMap.</p>
+      <h3>How much to trust it</h3>
+      <ul class="legend">
+        <li><span class="badge badge--verified">Verified (multiple sources)</span> Endpoints agree across two or more independent sources. This is not an official LTFRB check.</li>
+        <li><span class="badge badge--community">Community-reported</span> Listed by one source, or the details are partly inferred.</li>
+        <li><span class="badge badge--unverified">Unverified – help us confirm</span> The route or pin needs confirmation.</li>
+      </ul>
+      <p>Route lines are hand-placed estimates, not surveyed. Fares are estimates; the fare guide posted inside the vehicle settles any difference.</p>
+      <h3>Suggest a correction</h3>
+      <p>Spotted a wrong code, route, fare or pin? <a href="https://github.com/Splashzzz/Komyut/issues/new?template=route-fare-correction.yml" rel="noopener">Open a “Route/Fare correction” issue on GitHub</a> and include a source or the date you rode it. The project lives at <a href="https://github.com/Splashzzz/Komyut" rel="noopener">github.com/Splashzzz/Komyut</a>.</p>
+      <h3>Data sources</h3>
+      <ul>
+        <li><a href="https://wiki.openstreetmap.org/wiki/Public_transportation_in_Metro_Cebu" rel="noopener">OpenStreetMap wiki: Public transportation in Metro Cebu</a> (community route list)</li>
+        <li><a href="https://suroy.ph/cebu-city-jeepney-guide-2026/" rel="noopener">Suroy.ph: Cebu City Jeepney Guide 2026</a> and <a href="https://suroy.ph/cebu-north-south-bus-terminal-guide-2026/" rel="noopener">Cebu North and South Bus Terminal Guide 2026</a></li>
+        <li>Wikipedia, for coordinates of malls, terminals and landmarks, and <a href="https://en.wikivoyage.org/wiki/Cebu_City" rel="noopener">Wikivoyage: Cebu City</a></li>
+        <li><a href="https://www.sunstar.com.ph/manila/ltfrb-sets-new-puv-rates-effective-sept-28" rel="noopener">LTFRB fare matrices effective 28 September 2026</a>, as reported by the Philippine News Agency via SunStar</li>
+        <li>SunStar, Cebu Daily News and Philstar reports on the Cebu bus terminals</li>
+      </ul>
+    </div>
   </section>
 </main>
 
 <footer class="app-footer">
-  <p>Last updated: <time datetime="2026-10-20">2026-10-20</time> · Fares effective: <span id="fare-date">not loaded yet</span></p>
+  <p>Last updated: <time datetime="2026-11-02">2026-11-02</time> · Fares effective: <span id="fare-date">not loaded yet</span></p>
 </footer>
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
