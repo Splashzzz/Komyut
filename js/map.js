@@ -1,5 +1,6 @@
-// js/map.js — Leaflet init, layers, route highlight/clear. Safe if Leaflet is missing.
-// Phase 2+ API: addRoutes([{ id, label, sub, search, layer, color, latlngs, popupHtml }])
+// js/map.js — Leaflet init, layers, markers, route highlight/clear. Safe if Leaflet is missing.
+// Routes:  addRoutes([{ id, label, sub, search, layer, color, latlngs, popupHtml }])
+// Markers: addMarkers([{ id, layer, latlng, title, iconHtml, size, popupHtml }])
 
 export const CEBU_CENTER = [10.3157, 123.8854];
 export const DEFAULT_ZOOM = 12;
@@ -12,6 +13,7 @@ const ACTIVE = { weight: 6, opacity: 1 };
 let map = null;
 const groups = {};
 const routes = new Map();
+const markers = new Map();
 let selectedId = null;
 let listEl = null;
 let query = '';
@@ -52,6 +54,7 @@ export function initMap(el, onReady) {
     L.control.scale({ imperial: false }).addTo(map);
     LAYERS.forEach((name) => { groups[name] = L.layerGroup().addTo(map); });
     routes.forEach(attach);
+    markers.forEach(attachMarker);
     if (typeof onReady === 'function') {
       tiles.once('load', onReady);
       setTimeout(onReady, 6000);
@@ -83,7 +86,7 @@ export function addRoutes(items) {
       : [];
     if (pts.length < 2) return;
     const old = routes.get(String(r.id));
-    if (old && old.line) old.line.remove();
+    if (old && old.line && groups[old.layer]) groups[old.layer].removeLayer(old.line);
     const route = {
       id: String(r.id), label: String(r.label), sub: String(r.sub || ''), search: String(r.search || ''),
       layer: r.layer, color: safeColor(r.color), latlngs: pts, popupHtml: r.popupHtml || '', line: null,
@@ -165,7 +168,7 @@ export function renderList() {
     const li = document.createElement('li');
     li.className = 'empty';
     li.textContent = routes.size === 0
-      ? 'Coming soon: jeepney and bus routes will appear here.'
+      ? 'No routes loaded yet.'
       : `No routes match “${query}”.`;
     listEl.append(li);
     return;
@@ -191,5 +194,52 @@ export function renderList() {
   if (keepId) {
     const again = listEl.querySelector(`[data-id="${CSS.escape(keepId)}"]`);
     if (again) again.focus({ preventScroll: true });
+  }
+}
+
+// Point markers (terminals, places).
+function attachMarker(m) {
+  if (!map || m.marker || !groups[m.layer]) return;
+  const opts = { title: m.title, alt: m.title, keyboard: true };
+  if (m.iconHtml) {
+    const s = m.size || 44;
+    opts.icon = L.divIcon({
+      className: 'pin',
+      html: `<span aria-hidden="true" style="width:${s}px;height:${s}px;font-size:${Math.round(s / 2)}px">${escapeHtml(m.iconHtml)}</span>`,
+      iconSize: [s, s], iconAnchor: [s / 2, s / 2], popupAnchor: [0, -s / 2],
+    });
+  }
+  m.marker = L.marker(m.latlng, opts);
+  if (m.popupHtml) m.marker.bindPopup(m.popupHtml, { maxWidth: 280 });
+  m.marker.addTo(groups[m.layer]);
+}
+
+export function addMarkers(items) {
+  let added = 0;
+  (Array.isArray(items) ? items : []).forEach((m) => {
+    if (!m || !m.id || !LAYERS.includes(m.layer)) return;
+    if (!Array.isArray(m.latlng) || !Number.isFinite(m.latlng[0]) || !Number.isFinite(m.latlng[1])) return;
+    const old = markers.get(String(m.id));
+    if (old && old.marker && groups[old.layer]) groups[old.layer].removeLayer(old.marker);
+    const entry = {
+      id: String(m.id), layer: m.layer, latlng: m.latlng, title: String(m.title || ''),
+      popupHtml: m.popupHtml || '', iconHtml: String(m.iconHtml || ''), marker: null,
+      size: Number.isFinite(m.size) ? m.size : 44,
+    };
+    markers.set(entry.id, entry);
+    attachMarker(entry);
+    added += 1;
+  });
+  return added;
+}
+
+export function showMarker(id) {
+  const m = markers.get(id);
+  if (!m) return;
+  if (selectedId !== null) clearSelection();
+  setLayerVisible(m.layer, true);
+  if (map && m.marker) {
+    map.setView(m.latlng, 15, { animate: false });
+    m.marker.openPopup();
   }
 }
