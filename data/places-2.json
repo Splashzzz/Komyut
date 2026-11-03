@@ -1,0 +1,187 @@
+[
+  {
+    "id": "plaza-independencia",
+    "name": "Plaza Independencia",
+    "category": "park",
+    "city": "Cebu City",
+    "lat": 10.2927,
+    "lng": 123.9054,
+    "description": "Public plaza beside Fort San Pedro in the downtown port area. The Legazpi–Urdaneta monument stands here.",
+    "entrance_fee": "Free",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "Colon (downtown)", "steps": [
+        { "mode": "walk", "line": "", "instruction": "Walk southeast toward the port along Magallanes Street or Osmeña Boulevard.", "est_fare": null } ] },
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and get off at Colon.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Walk southeast toward the port.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate; help us confirm the location."
+  },
+  {
+    "id": "fort-san-pedro",
+    "name": "Fort San Pedro",
+    "category": "historic",
+    "city": "Cebu City",
+    "lat": 10.29222,
+    "lng": 123.90583,
+    "description": "Triangular bastion fort beside Plaza Independencia; construction started in 1565.",
+    "entrance_fee": "Reported ₱30 for adults, ₱20 for students and seniors; confirm",
+    "hours": "Reported 08:00–19:00 daily; confirm",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and get off at Colon.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Walk southeast toward Plaza Independencia; the fort is beside it.", "est_fare": null } ] },
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "jeepney", "line": "08F", "instruction": "Board 08F toward Mambaling and get off at Colon.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Walk southeast toward Plaza Independencia; the fort is beside it.", "est_fare": null } ] }
+    ],
+    "confidence": "verified",
+    "notes": "The fort was damaged in the 2025 Cebu earthquake; confirm that it is open."
+  },
+  {
+    "id": "magellans-cross",
+    "name": "Magellan’s Cross",
+    "category": "historic",
+    "city": "Cebu City",
+    "lat": 10.29331,
+    "lng": 123.90181,
+    "description": "Pavilion beside the Basilica del Santo Niño on Magallanes Street, housing the cross linked to Magellan’s arrival in 1521.",
+    "entrance_fee": "",
+    "hours": "Reported open at any time of day",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and ask for Colon or Carbon.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Walk, or take a short second ride, to Magallanes Street beside the Basilica.", "est_fare": null } ] }
+    ],
+    "confidence": "verified",
+    "notes": ""
+  },
+  {
+    "id": "basilica-santo-nino",
+    "name": "Basilica Minore del Santo Niño",
+    "category": "religious",
+    "city": "Cebu City",
+    "lat": 10.29389,
+    "lng": 123.90139,
+    "description": "Minor basilica founded in 1565 and home of the Santo Niño de Cebu image.",
+    "entrance_fee": "",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and ask for Colon or Carbon.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Walk, or take a short second ride, to the Basilica beside Magellan’s Cross.", "est_fare": null } ] }
+    ],
+    "confidence": "verified",
+    "notes": ""
+  },
+  {
+    "id": "cebu-metropolitan-cathedral",
+    "name": "Cebu Metropolitan Cathedral",
+    "category": "religious",
+    "city": "Cebu City",
+    "lat": 10.295,
+    "lng": 123.9009,
+    "description": "Cathedral in the downtown heritage district near the Basilica del Santo Niño.",
+    "entrance_fee": "",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and get off at Colon.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Walk toward the Basilica; the cathedral is in the same heritage district.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate; help us confirm the location."
+  },
+  {
+    "id": "casa-gorordo-museum",
+    "name": "Casa Gorordo Museum",
+    "category": "historic",
+    "city": "Cebu City",
+    "lat": 10.29585,
+    "lng": 123.9002,
+    "description": "19th-century ancestral house museum in the Parian district at 35 Lopez Jaena Street (also called Eduardo Aboitiz Street).",
+    "entrance_fee": "",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and get off at Colon.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Walk a few minutes into Parian toward Lopez Jaena Street.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate. Sources disagree on the fee (₱70 to ₱120) and hours (about 09:00–17:00 or 10:00–18:00, Tuesday to Sunday); confirm before going."
+  },
+  {
+    "id": "colon-street",
+    "name": "Colon Street",
+    "category": "historic",
+    "city": "Cebu City",
+    "lat": 10.2953,
+    "lng": 123.9006,
+    "description": "Reputed to be the oldest street in the Philippines, traced to the 1560s town plan. Today a busy downtown strip.",
+    "entrance_fee": "Free",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and get off at Colon.", "est_fare": null } ] },
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "jeepney", "line": "08F", "instruction": "Board 08F toward Mambaling and get off at Colon.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate; help us confirm the location."
+  },
+  {
+    "id": "carbon-market",
+    "name": "Carbon Market",
+    "category": "market",
+    "city": "Cebu City",
+    "lat": 10.2927,
+    "lng": 123.8983,
+    "description": "Large public market in the old downtown, at the Carbon end of jeepney 17B.",
+    "entrance_fee": "Free",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon, the end of the line, and say “Carbon ni?” before sitting.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate; help us confirm the location."
+  },
+  {
+    "id": "cebu-taoist-temple",
+    "name": "Cebu Taoist Temple",
+    "category": "religious",
+    "city": "Cebu City",
+    "lat": 10.3338,
+    "lng": 123.8877,
+    "description": "Taoist temple built in 1972 by Cebu’s Chinese community in Beverly Hills, reached by an 81-step staircase, with city views.",
+    "entrance_fee": "Free; donations welcome",
+    "hours": "Reported about 09:00–17:00 daily (some sources say 08:00); confirm",
+    "how_to_commute": [
+      { "from": "Ayala Center Cebu", "steps": [
+        { "mode": "jeepney", "line": "04L", "instruction": "Ride 04L toward JY Square in Lahug.", "est_fare": null },
+        { "mode": "taxi", "line": "", "instruction": "Jeepneys do not enter the Beverly Hills subdivision. Take a metered taxi or ride-hailing car from Lahug to the temple.", "est_fare": null } ] }
+    ],
+    "confidence": "verified",
+    "notes": "Dress modestly; sleeveless tops and short skirts may be refused entry."
+  },
+  {
+    "id": "tops-lookout",
+    "name": "Tops Lookout",
+    "category": "park",
+    "city": "Cebu City",
+    "lat": 10.3445,
+    "lng": 123.8738,
+    "description": "Hilltop observation deck in Busay with views over Cebu City, Mandaue and Mactan.",
+    "entrance_fee": "Reported ₱100; confirm",
+    "hours": "Reports vary: open 24 hours, or about 07:00–24:00; confirm",
+    "how_to_commute": [
+      { "from": "Ayala Center Cebu", "steps": [
+        { "mode": "jeepney", "line": "04L", "instruction": "Ride 04L toward JY Square in Lahug. 04L does not go up to Tops.", "est_fare": null },
+        { "mode": "habal-habal", "line": "", "instruction": "Continue uphill by shuttle, taxi or an agreed motorcycle ride. Agree on the fare before riding.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate. An older listing mentions a shuttle from IT Park; confirm before relying on it."
+  }
+]
