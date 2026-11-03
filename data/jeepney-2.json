@@ -1,0 +1,28 @@
+[
+  {
+    "code": "04B",
+    "name": "Lahug – Carbon",
+    "type": "traditional",
+    "from": "Lahug",
+    "to": "Carbon",
+    "via": ["Escario St", "Capitol"],
+    "waypoints": [[10.3275, 123.8995], [10.3225, 123.8950], [10.3190, 123.8925], [10.3167, 123.8908], [10.3110, 123.8915], [10.3034, 123.8965], [10.2953, 123.9006], [10.2927, 123.8983]],
+    "color": "#2e7d32",
+    "operating_hours": "",
+    "confidence": "community",
+    "notes": "Listed by a 2026 travel guide as Lahug, Escario, Capitol and Carbon. Starting point, roads and unit type not confirmed. Line is a rough guide and overlaps 17B downtown."
+  },
+  {
+    "code": "01K",
+    "name": "Sambag II – SM City Cebu",
+    "type": "traditional",
+    "from": "Sambag II (Urgello)",
+    "to": "SM City Cebu",
+    "via": ["Colon", "Parian", "M.J. Cuenco Ave"],
+    "waypoints": [[10.3035, 123.9000], [10.2953, 123.9006], [10.2975, 123.9075], [10.3042, 123.9111], [10.3111, 123.9181]],
+    "color": "#c62828",
+    "operating_hours": "",
+    "confidence": "community",
+    "notes": "Listed by a 2026 travel guide and a community wiki; some listings extend this code to Parkmall. Sambag II start point, roads and unit type not confirmed. Line is a rough guide."
+  }
+]
