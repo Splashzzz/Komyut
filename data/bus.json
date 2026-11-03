@@ -1,0 +1,91 @@
+{
+  "terminals": [
+    {
+      "id": "csbt",
+      "name": "Cebu South Bus Terminal (CSBT)",
+      "lat": 10.29763,
+      "lng": 123.89348,
+      "address": "N. Bacalso Avenue, Cebu City (between the LTO-7 office and CityMall Bacalso)",
+      "operators": ["Ceres Liner (Vallacar Transit)", "Sugbo Transit", "Sunrays Bus Lines", "Metrolink Express Liner", "Chan Transit", "Jegans Bus Liner", "JS Calvo Transport"],
+      "destinations": ["Carcar", "Sibonga", "Argao", "Oslob", "Moalboal", "Dumanjug", "Bato (Samboan) via Barili", "Toledo City", "Santander", "Dumaguete (Negros Oriental)"],
+      "confidence": "verified",
+      "notes": "Run by the Cebu Provincial Government. A single combined north–south terminal has been discussed; confirm the current site before travelling."
+    },
+    {
+      "id": "cnbt",
+      "name": "Cebu North Bus Terminal (CNBT)",
+      "lat": 10.31109,
+      "lng": 123.92078,
+      "address": "SM City Cebu outdoor parking area, corner S. Osmeña Road and Kaohsiung Street, North Reclamation Area, Cebu City",
+      "operators": ["Ceres Liner (Vallacar Transit)", "Sugbo Transit Express", "Metro Cebu Autobus", "White Stallion Express", "CADCO Trans", "ABC Liner", "MyBus"],
+      "destinations": ["Danao City", "Bogo City", "Hagnaya Port (San Remigio, for Bantayan)", "Maya Port (Daanbantayan, for Malapascua)", "Tuburan", "Borbon", "Sogod", "Tabogon", "Catmon", "Carmen", "Camotes Island", "Bacolod via Toledo (through bus)"],
+      "confidence": "verified",
+      "notes": "Temporary site agreed with SM Prime in 2020 and still in use per late-2025 reports. Peak-season satellite loading points have been used (for example near U.N. Ave. and Marcelo Fernan Bridge, Mandaue); check announcements."
+    },
+    {
+      "id": "parkmall",
+      "name": "Parkmall Terminal (Mandaue)",
+      "lat": 10.32555,
+      "lng": 123.93429,
+      "address": "Parkmall, Ouano Avenue, Mandaue Reclamation Area, Mandaue City",
+      "operators": ["MyBus", "Modern jeepney cooperatives"],
+      "destinations": ["SM City Cebu", "SM Seaside City", "Talisay City", "Mactan–Cebu International Airport", "Consolacion", "Liloan", "Lapu-Lapu City"],
+      "confidence": "verified",
+      "notes": "Large mall terminal mainly served by modern jeepneys (including codes 24 and 25); MyBus buses also stop here."
+    }
+  ],
+  "routes": [
+    {
+      "id": "MY01",
+      "operator": "MyBus (Metro Rapid Transit Services)",
+      "from": "SM Seaside City",
+      "to": "Parkmall",
+      "via": ["SM City Cebu", "Cebu North Bus Terminal"],
+      "waypoints": [[10.2815, 123.8808], [10.2840, 123.8890], [10.2875, 123.8985], [10.2915, 123.9070], [10.2945, 123.9122], [10.3042, 123.9111], [10.3118, 123.9181], [10.3111, 123.9208], [10.3185, 123.9275], [10.3255, 123.9343]],
+      "bus_type": "aircon",
+      "est_duration_min": null,
+      "color": "#37474f",
+      "confidence": "verified",
+      "notes": "Endpoints and stops agree across an OSM community listing and Wikivoyage. Stops and schedules change; confirm at the terminal. SM Seaside end point is a rough estimate."
+    },
+    {
+      "id": "MY02",
+      "operator": "MyBus (Metro Rapid Transit Services)",
+      "from": "SM Seaside City",
+      "to": "Talisay City",
+      "via": [],
+      "waypoints": [[10.2815, 123.8808], [10.2700, 123.8640], [10.2570, 123.8530], [10.2447, 123.8494]],
+      "bus_type": "aircon",
+      "est_duration_min": null,
+      "color": "#827717",
+      "confidence": "verified",
+      "notes": "Endpoints agree across an OSM community listing and Wikivoyage. Roads are not confirmed; the line is a rough guide along the south coast."
+    },
+    {
+      "id": "MY03",
+      "operator": "MyBus (Metro Rapid Transit Services)",
+      "from": "SM City Cebu",
+      "to": "Mactan–Cebu International Airport",
+      "via": ["Parkmall"],
+      "waypoints": [[10.3118, 123.9181], [10.3185, 123.9275], [10.3255, 123.9343], [10.3270, 123.9440], [10.3215, 123.9590], [10.3140, 123.9710], [10.3075, 123.9794]],
+      "bus_type": "aircon",
+      "est_duration_min": null,
+      "color": "#5d4037",
+      "confidence": "verified",
+      "notes": "Endpoints agree across Wikivoyage, travel guides and a 2026 transport guide; an OSM listing extends this code to SM Seaside City. One guide estimates 35–40 minutes from the airport to SM City Cebu; traffic varies."
+    },
+    {
+      "id": "MY05",
+      "operator": "MyBus (Metro Rapid Transit Services)",
+      "from": "Fuente Osmeña (BDO Fuente)",
+      "to": "SM Seaside City",
+      "via": [],
+      "waypoints": [[10.3110, 123.8915], [10.3034, 123.8965], [10.2958, 123.9015], [10.2918, 123.9035], [10.2878, 123.8985], [10.2840, 123.8890], [10.2815, 123.8808]],
+      "bus_type": "aircon",
+      "est_duration_min": null,
+      "color": "#0097a7",
+      "confidence": "community",
+      "notes": "Endpoints per an OSM community listing and a 2026 guide; older guides described it as a free ride, which is unconfirmed. Roads between the ends are not confirmed; the line is a rough guide."
+    }
+  ]
+}
