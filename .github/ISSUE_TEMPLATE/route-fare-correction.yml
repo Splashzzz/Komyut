@@ -1,0 +1,44 @@
+name: Route/Fare correction
+description: Report a wrong or missing jeepney code, bus route, place, pin or fare
+title: "[Correction] "
+labels: ["data-correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep Komyut accurate. Please do not guess; a source or the date you rode it is enough.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What needs correcting?
+      options:
+        - Jeepney route or code
+        - Bus terminal or route
+        - Place, pin or commute directions
+        - Fare
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: item
+    attributes:
+      label: Route code, terminal or place name
+      placeholder: "Example: 04L, South Bus Terminal, Fort San Pedro"
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What is correct?
+      description: Include the start, end, roads passed and where you board or get off, if you know them.
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: A link, a photo, or the date you rode it.
