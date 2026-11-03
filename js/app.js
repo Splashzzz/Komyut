@@ -60,7 +60,7 @@ function showTab(name, moveFocus) {
       else link.removeAttribute('aria-current');
     }
   });
-  document.title = `${TABS[name]} · Sakay Cebu – Metro Cebu commuter guide`;
+  document.title = `${TABS[name]} · Komyut – Metro Cebu commuter guide`;
   if (name === 'map') {
     startMap();
     MapView.invalidate();
@@ -95,6 +95,18 @@ function init() {
   wireControls();
   window.addEventListener('hashchange', () => showTab(currentTab(), true));
   showTab(currentTab(), false);
+  import('./jeepney.js')
+    .then((m) => m.initJeepney())
+    .catch(() => showToast('The Jeepney tab could not start. Other tabs still work.'));
+  import('./bus.js')
+    .then((m) => m.initBus())
+    .catch(() => showToast('The Bus tab could not start. Other tabs still work.'));
+  import('./places.js')
+    .then((m) => m.initPlaces())
+    .catch(() => showToast('The Places tab could not start. Other tabs still work.'));
+  import('./fares.js')
+    .then((m) => m.initFares())
+    .catch(() => showToast('The Fares tab could not start. Other tabs still work.'));
 }
 
 window.addEventListener('error', () => showToast('Something went wrong. Other tabs still work.'));
