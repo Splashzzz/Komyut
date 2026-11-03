@@ -1,0 +1,188 @@
+[
+  {
+    "id": "sm-city-cebu",
+    "name": "SM City Cebu",
+    "category": "mall",
+    "city": "Cebu City",
+    "lat": 10.31111,
+    "lng": 123.91806,
+    "description": "Large mall in the North Reclamation Area (Mabolo). Its compound has jeepney, UV Express and MyBus terminals, plus the Cebu North Bus Terminal.",
+    "entrance_fee": "Free to enter",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "Colon (downtown)", "steps": [
+        { "mode": "jeepney", "line": "08F", "instruction": "Board 08F at Colon toward SM City Cebu. Confirm the direction, then say “SM ni?” before sitting.", "est_fare": null } ] },
+      { "from": "Ayala Center Cebu", "steps": [
+        { "mode": "jeepney", "line": "03Q", "instruction": "Board 03Q (or 04L) at Ayala toward SM City Cebu.", "est_fare": null } ] },
+      { "from": "SM Seaside City", "steps": [
+        { "mode": "bus", "line": "MY01", "instruction": "Ride MyBus MY01 from SM Seaside City; SM City Cebu is a stop on the route.", "est_fare": null } ] }
+    ],
+    "confidence": "community",
+    "notes": ""
+  },
+  {
+    "id": "sm-seaside-city",
+    "name": "SM Seaside City",
+    "category": "mall",
+    "city": "Cebu City",
+    "lat": 10.28039,
+    "lng": 123.88183,
+    "description": "Large mall at South Road Properties (SRP) and a MyBus terminal for the south.",
+    "entrance_fee": "Free to enter",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "bus", "line": "MY01", "instruction": "Ride MyBus MY01 from SM City Cebu toward SM Seaside City.", "est_fare": null } ] },
+      { "from": "Fuente Osmeña", "steps": [
+        { "mode": "bus", "line": "MY05", "instruction": "Ride MyBus MY05 from the BDO Fuente stop. Exact stop and fare are not confirmed.", "est_fare": null } ] }
+    ],
+    "confidence": "community",
+    "notes": ""
+  },
+  {
+    "id": "ayala-center-cebu",
+    "name": "Ayala Center Cebu",
+    "category": "mall",
+    "city": "Cebu City",
+    "lat": 10.31778,
+    "lng": 123.905,
+    "description": "Mall at Cebu Business Park, Archbishop Reyes Avenue corner Cardinal Rosales Avenue, Brgy. Luz.",
+    "entrance_fee": "Free to enter",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "Lahug (JY Square)", "steps": [
+        { "mode": "jeepney", "line": "04L", "instruction": "Board 04L at JY Square toward SM City Cebu and say “Ayala” when you pay.", "est_fare": null } ] },
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "jeepney", "line": "04L", "instruction": "Board 04L (or 03Q) toward Ayala. Confirm the card says Ayala before sitting.", "est_fare": null } ] }
+    ],
+    "confidence": "verified",
+    "notes": ""
+  },
+  {
+    "id": "robinsons-galleria-cebu",
+    "name": "Robinsons Galleria Cebu",
+    "category": "mall",
+    "city": "Cebu City",
+    "lat": 10.30418,
+    "lng": 123.91107,
+    "description": "Mall at General Maxilom Avenue corner Osmeña Boulevard, Brgy. Tejero. A few meters from the Port of Cebu and about 1 km from SM City Cebu.",
+    "entrance_fee": "Free to enter",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "Colon (downtown)", "steps": [
+        { "mode": "jeepney", "line": "08F", "instruction": "Board 08F toward SM City Cebu and ask to be dropped at Robinsons Galleria.", "est_fare": null } ] },
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "jeepney", "line": "08F", "instruction": "Ride 08F toward Colon and ask to get off at Robinsons Galleria (about 1 km).", "est_fare": null } ] }
+    ],
+    "confidence": "community",
+    "notes": ""
+  },
+  {
+    "id": "parkmall",
+    "name": "Parkmall",
+    "category": "mall",
+    "city": "Mandaue",
+    "lat": 10.32555,
+    "lng": 123.93429,
+    "description": "Mall on Ouano Avenue, Mandaue Reclamation Area, with a large transport terminal that mainly serves modern jeepneys. MyBus also stops here.",
+    "entrance_fee": "Free to enter",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "bus", "line": "MY01", "instruction": "Ride MyBus MY01 (or MY03) from SM City Cebu toward Parkmall.", "est_fare": null } ] }
+    ],
+    "confidence": "verified",
+    "notes": ""
+  },
+  {
+    "id": "sm-j-mall",
+    "name": "SM J Mall",
+    "category": "mall",
+    "city": "Mandaue",
+    "lat": 10.33517,
+    "lng": 123.93384,
+    "description": "SM mall on Albaño Street, Barangay Bakilid, Mandaue City.",
+    "entrance_fee": "Free to enter",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "bus", "line": "MY01", "instruction": "Ride MyBus MY01 to Parkmall.", "est_fare": null },
+        { "mode": "taxi", "line": "", "instruction": "SM J Mall is about 1 km north of Parkmall. Take a short taxi ride, or ask at the Parkmall terminal whether a bus continues to SM J Mall.", "est_fare": null } ] }
+    ],
+    "confidence": "community",
+    "notes": ""
+  },
+  {
+    "id": "cebu-it-park",
+    "name": "Cebu IT Park",
+    "category": "other",
+    "city": "Cebu City",
+    "lat": 10.3304,
+    "lng": 123.9074,
+    "description": "27-hectare business park in Apas built for IT and BPO companies. The Central Bloc mixed-use complex is part of it.",
+    "entrance_fee": "Free to enter",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "Colon / Carbon (downtown)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Apas and say “Apas” when you pay.", "est_fare": null } ] },
+      { "from": "Fuente Osmeña", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Apas near Osmeña Boulevard.", "est_fare": null } ] }
+    ],
+    "confidence": "verified",
+    "notes": ""
+  },
+  {
+    "id": "cebu-ocean-park",
+    "name": "Cebu Ocean Park",
+    "category": "theme_park",
+    "city": "Cebu City",
+    "lat": 10.28105,
+    "lng": 123.87834,
+    "description": "Oceanarium at South Road Properties, beside SM Seaside City.",
+    "entrance_fee": "Reported ₱600 on weekdays, ₱800 on weekends and holidays; confirm",
+    "hours": "Reported 10:00–18:00, last entry 17:00; confirm",
+    "how_to_commute": [
+      { "from": "SM City Cebu", "steps": [
+        { "mode": "bus", "line": "MY01", "instruction": "Ride MyBus MY01 to SM Seaside City.", "est_fare": null },
+        { "mode": "walk", "line": "", "instruction": "Cebu Ocean Park is beside SM Seaside City, next to the San Pedro Calungsod Chapel. Ask the mall guards for the Ocean Park entrance.", "est_fare": null } ] }
+    ],
+    "confidence": "community",
+    "notes": "One 2025 guide lists the park as closed on Mondays; confirm before going."
+  },
+  {
+    "id": "fuente-osmena-circle",
+    "name": "Fuente Osmeña Circle",
+    "category": "park",
+    "city": "Cebu City",
+    "lat": 10.311,
+    "lng": 123.8915,
+    "description": "Roundabout park with a fountain where Osmeña Boulevard meets General Maxilom Avenue, surrounded by hotels and malls.",
+    "entrance_fee": "Free",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and get off at Fuente Osmeña.", "est_fare": null } ] },
+      { "from": "Colon (downtown)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Apas and get off at Fuente Osmeña.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate; help us confirm the location."
+  },
+  {
+    "id": "cebu-provincial-capitol",
+    "name": "Cebu Provincial Capitol",
+    "category": "other",
+    "city": "Cebu City",
+    "lat": 10.3167,
+    "lng": 123.8908,
+    "description": "Provincial government building at the northern end of Osmeña Boulevard. A common reference point when asking a jeepney driver.",
+    "entrance_fee": "",
+    "hours": "",
+    "how_to_commute": [
+      { "from": "IT Park (Apas)", "steps": [
+        { "mode": "jeepney", "line": "17B", "instruction": "Board 17B toward Carbon and ask for Capitol.", "est_fare": null } ] }
+    ],
+    "confidence": "unverified",
+    "notes": "Pin is approximate; help us confirm the location."
+  }
+]
