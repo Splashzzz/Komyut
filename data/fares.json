@@ -1,0 +1,26 @@
+{
+  "effective_date": "2026-09-28",
+  "source_note": "LTFRB fare matrices effective 28 September 2026. The jeepney increase was first approved in March 2026, suspended, then allowed to take effect after DOTr lifted the suspension on 26 September. Verify with LTFRB-7 or the fare guide posted inside the vehicle.",
+  "checked_on": "2026-11-02",
+  "jeepney_traditional": { "min_fare": 14, "min_km": 4, "per_km": 2 },
+  "jeepney_modern": { "min_fare": 17, "min_km": 4, "per_km": 2.4 },
+  "discount_pct": 20,
+  "discount_applies_to": ["senior citizens", "PWDs", "students (school days)"],
+  "bus": {
+    "ordinary": { "min_fare": 15, "min_km": 5, "per_km": 2.49 },
+    "aircon": { "min_fare": 18, "min_km": 5, "per_km": 2.98 }
+  },
+  "bus_note": "Bus figures are the LTFRB city-bus matrix (first 5 km). Premium or point-to-point services, including some MyBus runs, may charge differently; confirm with the operator.",
+  "rounding": {
+    "step": 0.25,
+    "mode": "nearest",
+    "note": "Estimates are rounded to the nearest ₱0.25, the step behind the LTFRB discounted minimums of ₱11.25 (traditional jeepney) and ₱13.50 (modern jeepney). The posted fare guide settles any difference."
+  },
+  "distance_estimate": {
+    "road_factor": 1.3,
+    "note": "Straight-line (Haversine) distance multiplied by 1.3 to approximate road distance."
+  },
+  "taxi_note": "Regular taxis use the meter. The provisional flag-down posted by LTFRB is ₱65 (up from ₱50); the petition was still pending on 29 September 2026. Ride-hailing sedan bookings start at ₱65.",
+  "tricycle_note": "Fares are locally negotiated; no fixed rate.",
+  "habal_note": "Motorcycle rides (habal-habal) are negotiated; agree on the fare before riding."
+}
