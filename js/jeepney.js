@@ -1,5 +1,5 @@
 // js/jeepney.js — Jeepney tab: load data, feed the map, render cards.
-import { loadJeepney, confidenceInfo, jeepneyMinFare, faresReady } from './data.js';
+import { loadJeepney, confidenceInfo, jeepneyMinFare, faresReady, pathsReady } from './data.js';
 import * as MapView from './map.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -14,19 +14,20 @@ function el(tag, cls, text) {
   return n;
 }
 
-function popupHtml(r) {
+function popupHtml(r, approx) {
   const esc = MapView.escapeHtml;
   const info = confidenceInfo(r.confidence);
   const fare = jeepneyMinFare(r.type);
   const ends = [r.from, r.to].filter(Boolean).map(esc).join(' → ');
   const via = r.via.length ? `<div>Via: ${r.via.map(esc).join(', ')}</div>` : '';
+  const line = approx ? 'Dashed line: rough estimate, not snapped to roads.' : 'Line snapped to roads.';
   return `<div class="popup">
     <span class="pill" style="background:${r.color};color:${MapView.textColorFor(r.color)}">${esc(r.code)}</span>
     <strong>${esc(r.name)}</strong>
     <div>${ends}</div>${via}
     <div>Min. fare: ${fare === null ? 'not available yet' : '₱' + fare}</div>
     <span class="badge ${info.cls}">${esc(info.label)}</span>
-    <div class="popup-note">Routes are approximate. Confirm with the driver or barker.</div>
+    <div class="popup-note">${line} Routes are approximate. Confirm with the driver or barker.</div>
   </div>`;
 }
 
@@ -94,23 +95,29 @@ function showError() {
 
 async function load() {
   showSkeleton();
-  const [res] = await Promise.all([loadJeepney(), faresReady]);
+  const [res, , paths] = await Promise.all([loadJeepney(), faresReady, pathsReady]);
   if (!res.ok) {
     showError();
     return;
   }
   routes = res.data;
   try {
-    MapView.addRoutes(routes.map((r) => ({
-      id: `jeepney:${r.code}`,
-      label: r.code,
-      sub: r.name,
-      search: [r.from, r.to, ...r.via].join(' '),
-      layer: 'jeepney',
-      color: r.color,
-      latlngs: r.waypoints,
-      popupHtml: popupHtml(r),
-    })));
+    MapView.addRoutes(routes.map((r) => {
+      const snapped = paths[`jeepney:${r.code}`];
+      return {
+        id: `jeepney:${r.code}`,
+        label: r.code,
+        sub: r.name,
+        search: [r.from, r.to, ...r.via].join(' '),
+        group: 'Jeepney',
+        layer: 'jeepney',
+        color: r.color,
+        latlngs: snapped || r.waypoints,
+        approx: !snapped,
+        meta: { kind: 'jeepney', type: r.type, name: r.name, from: r.from, to: r.to, via: r.via },
+        popupHtml: popupHtml(r, !snapped),
+      };
+    }));
   } catch (err) {
     // Map layer is optional; the tab still works without it.
   }

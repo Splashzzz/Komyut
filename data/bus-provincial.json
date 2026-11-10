@@ -1,0 +1,108 @@
+{
+  "routes": [
+    {
+      "id": "S-CARCAR",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu South Bus Terminal",
+      "to": "Carcar",
+      "via": ["Talisay", "Minglanilla", "Naga", "San Fernando"],
+      "waypoints": [[10.29763, 123.89348], [10.2447, 123.8494], [10.2450, 123.7960], [10.2092, 123.7586], [10.1632, 123.7060], [10.1064, 123.6405]],
+      "est_duration_min": null,
+      "color": "#1e88e5",
+      "confidence": "community",
+      "notes": "Carcar is listed as a South Bus Terminal destination by travel guides. Via towns follow the main south highway; the line is a rough guide. Operators and bus classes vary; confirm at the terminal."
+    },
+    {
+      "id": "S-ARGAO",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu South Bus Terminal",
+      "to": "Argao",
+      "via": ["Carcar", "Sibonga"],
+      "waypoints": [[10.29763, 123.89348], [10.2447, 123.8494], [10.2450, 123.7960], [10.2092, 123.7586], [10.1632, 123.7060], [10.1064, 123.6405], [10.0133, 123.6275], [9.8806, 123.6050]],
+      "est_duration_min": null,
+      "color": "#3949ab",
+      "confidence": "community",
+      "notes": "Argao is listed as a South Bus Terminal destination by travel guides. Via towns follow the main south highway; the line is a rough guide. Operators and bus classes vary; confirm at the terminal."
+    },
+    {
+      "id": "S-OSLOB",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu South Bus Terminal",
+      "to": "Oslob",
+      "via": ["Carcar", "Argao", "Dalaguete", "Alcoy", "Boljoon"],
+      "waypoints": [[10.29763, 123.89348], [10.2447, 123.8494], [10.2450, 123.7960], [10.2092, 123.7586], [10.1632, 123.7060], [10.1064, 123.6405], [10.0133, 123.6275], [9.8806, 123.6050], [9.7614, 123.5358], [9.7081, 123.5047], [9.6300, 123.4800], [9.4608, 123.4414]],
+      "est_duration_min": null,
+      "color": "#5e35b1",
+      "confidence": "community",
+      "notes": "Oslob is listed as a South Bus Terminal destination by travel guides. Via towns follow the east-coast highway; the line is a rough guide. Operators and bus classes vary; confirm at the terminal."
+    },
+    {
+      "id": "S-MOALBOAL",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu South Bus Terminal",
+      "to": "Moalboal",
+      "via": ["Carcar", "Barili", "Dumanjug", "Ronda", "Alcantara"],
+      "waypoints": [[10.29763, 123.89348], [10.2447, 123.8494], [10.2450, 123.7960], [10.2092, 123.7586], [10.1632, 123.7060], [10.1064, 123.6405], [10.1139, 123.5139], [10.0594, 123.4381], [10.0519, 123.4003], [9.9700, 123.4000], [9.9391, 123.3947]],
+      "est_duration_min": null,
+      "color": "#00897b",
+      "confidence": "community",
+      "notes": "Moalboal is listed as a South Bus Terminal destination by travel guides; buses to the west coast go through Barili. Via towns are inferred from the highway; the line is a rough guide. Operators and bus classes vary; confirm at the terminal."
+    },
+    {
+      "id": "N-DANAO",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu North Bus Terminal",
+      "to": "Danao City",
+      "via": ["Mandaue", "Consolacion", "Liloan", "Compostela"],
+      "waypoints": [[10.31109, 123.92078], [10.3236, 123.9223], [10.3764, 123.9568], [10.3994, 123.9972], [10.4533, 124.0211], [10.5208, 124.0272]],
+      "est_duration_min": null,
+      "color": "#f4511e",
+      "confidence": "community",
+      "notes": "Danao City is listed as a North Bus Terminal destination by travel guides. Via towns follow the Cebu North Road; the line is a rough guide. Operators and bus classes vary; confirm at the terminal."
+    },
+    {
+      "id": "N-BOGO",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu North Bus Terminal",
+      "to": "Bogo City",
+      "via": ["Danao", "Carmen", "Catmon", "Sogod", "Borbon", "Tabogon"],
+      "waypoints": [[10.31109, 123.92078], [10.3236, 123.9223], [10.3764, 123.9568], [10.3994, 123.9972], [10.4533, 124.0211], [10.5208, 124.0272], [10.5833, 124.0178], [10.7167, 124.0000], [10.7500, 124.0000], [10.8333, 124.0167], [10.9333, 124.0167], [11.0474, 124.0058]],
+      "est_duration_min": null,
+      "color": "#fb8c00",
+      "confidence": "community",
+      "notes": "Bogo City is listed as a North Bus Terminal destination by travel guides. Via towns follow the east-coast highway; the line is a rough guide. Operators and bus classes vary; confirm at the terminal."
+    },
+    {
+      "id": "N-HAGNAYA",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu North Bus Terminal",
+      "to": "Hagnaya Port (San Remigio)",
+      "via": ["Danao", "Bogo"],
+      "waypoints": [[10.31109, 123.92078], [10.3236, 123.9223], [10.3764, 123.9568], [10.3994, 123.9972], [10.4533, 124.0211], [10.5208, 124.0272], [10.5833, 124.0178], [10.7167, 124.0000], [10.7500, 124.0000], [10.8333, 124.0167], [10.9333, 124.0167], [11.0474, 124.0058], [11.0539, 123.9449], [11.0690, 123.9480]],
+      "est_duration_min": null,
+      "color": "#d81b60",
+      "confidence": "community",
+      "notes": "Hagnaya Port, the ferry link to Bantayan Island, is listed as a North Bus Terminal destination by travel guides. Via towns follow the east-coast highway; the line and the port position are rough guides. Operators vary; confirm at the terminal."
+    },
+    {
+      "id": "N-MAYA",
+      "category": "provincial",
+      "operator": "Several operators (see the terminal card)",
+      "from": "Cebu North Bus Terminal",
+      "to": "Maya Port (Daanbantayan)",
+      "via": ["Danao", "Bogo", "Medellin", "Daanbantayan"],
+      "waypoints": [[10.31109, 123.92078], [10.3236, 123.9223], [10.3764, 123.9568], [10.3994, 123.9972], [10.4533, 124.0211], [10.5208, 124.0272], [10.5833, 124.0178], [10.7167, 124.0000], [10.7500, 124.0000], [10.8333, 124.0167], [10.9333, 124.0167], [11.0474, 124.0058], [11.1272, 123.9622], [11.2431, 124.0044], [11.2690, 123.9900]],
+      "est_duration_min": null,
+      "color": "#6d4c41",
+      "confidence": "community",
+      "notes": "Maya Port, the ferry link to Malapascua Island, is listed as a North Bus Terminal destination by travel guides. Via towns follow the north highway; the line and the port position are rough guides. Operators vary; confirm at the terminal."
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-// js/fares.js — Fares tab: table, discount info, calculator. Also fills the footer fare date.
+// js/fares.js — Fares tab: table, discount info, calculator (incl. taxi). Also fills the footer fare date.
 import { faresReady, reloadFares, loadPlaces, loadBus } from './data.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -7,7 +7,9 @@ const MODES = [
   ['jeepney_modern', 'Modern jeepney'],
   ['bus_ordinary', 'Ordinary city bus'],
   ['bus_aircon', 'Air-conditioned city bus'],
+  ['provincial_ordinary', 'Ordinary provincial bus'],
 ];
+const TAXI = 'taxi';
 let fares = null;
 let points = [];
 
@@ -46,6 +48,7 @@ function ruleFor(key) {
   if (!fares) return null;
   if (key === 'bus_ordinary') return fares.bus.ordinary;
   if (key === 'bus_aircon') return fares.bus.aircon;
+  if (key === 'provincial_ordinary') return fares.provincial_ordinary;
   return fares[key] || null;
 }
 
@@ -54,7 +57,7 @@ function renderTable() {
   host.textContent = '';
   const wrap = el('div', 'table-wrap');
   const table = el('table', 'fare-table');
-  table.append(el('caption', null, `Metro Cebu fares effective ${fares.effective_date || '(date not stated)'}`));
+  table.append(el('caption', null, `Fares effective ${fares.effective_date || '(date not stated)'}`));
   const thead = el('thead');
   const hr = el('tr');
   ['Vehicle', 'Minimum fare', 'Covers first', 'Each extra km', `Discounted minimum (${fares.discount_pct}% off)`].forEach((h) => {
@@ -80,6 +83,18 @@ function renderTable() {
     }
     tbody.append(tr);
   });
+  const taxiRow = el('tr');
+  const taxiTh = el('th', null, 'Taxi (regular, metered)');
+  taxiTh.scope = 'row';
+  taxiRow.append(taxiTh);
+  const flag = fares.taxi.flag_down;
+  taxiRow.append(
+    el('td', null, flag === null ? 'Rate not yet verified' : `${peso(flag)} flag-down (provisional)`),
+    el('td', null, 'Not stated'),
+    el('td', null, fares.taxi.per_km === null ? 'Rate not yet verified' : peso(fares.taxi.per_km)),
+    el('td', null, 'Not applied here'),
+  );
+  tbody.append(taxiRow);
   table.append(thead, tbody);
   wrap.append(table);
   host.append(wrap);
@@ -96,8 +111,9 @@ function renderInfo() {
   };
   const who = fares.discount_applies_to.length ? fares.discount_applies_to.join(', ') : 'qualified passengers';
   add('Discounts', [`${fares.discount_pct}% off for ${who}. Show a valid ID and say so before you pay.`]);
-  add('Buses', [fares.bus_note]);
-  add('Taxi, tricycle and habal-habal', [fares.taxi_note, fares.tricycle_note, fares.habal_note]);
+  add('City buses', [fares.bus_note]);
+  add('Provincial buses', [fares.provincial_note]);
+  add('Taxi, tricycle and habal-habal', [fares.taxi_note, fares.taxi.note, fares.tricycle_note, fares.habal_note]);
   add('Source', [fares.source_note, fares.checked_on ? `Last checked: ${fares.checked_on}.` : '', fares.rounding.note]);
 }
 
@@ -109,6 +125,9 @@ function fillCalc() {
     o.value = key;
     mode.append(o);
   });
+  const taxiOpt = el('option', null, 'Taxi (regular, metered)');
+  taxiOpt.value = TAXI;
+  mode.append(taxiOpt);
   ['#calc-from', '#calc-to'].forEach((sel) => {
     const s = $(sel);
     s.textContent = '';
@@ -126,12 +145,30 @@ function fillCalc() {
 
 const idx = (v) => (v === '' ? -1 : Number(v));
 
+function taxiResult(out, km, label) {
+  const flag = fares.taxi.flag_down;
+  const own = parseFloat($('#calc-taxi-rate').value);
+  const rate = fares.taxi.per_km !== null ? fares.taxi.per_km : (Number.isFinite(own) && own > 0 ? own : null);
+  out.append(el('p', null, `${label}: about ${km.toFixed(1)} km (estimate)`));
+  if (flag !== null) out.append(el('p', null, `Flag-down: ${peso(flag)} (provisional; the LTFRB petition was still pending).`));
+  if (rate !== null && flag !== null) {
+    const total = Math.round((flag + rate * km) * 100) / 100;
+    out.append(el('p', 'big', `Estimated taxi fare: about ${peso(total)}`));
+    out.append(el('p', null, `Flag-down plus ${km.toFixed(1)} km × ${peso(rate)}${fares.taxi.per_km === null ? ' (the rate you entered)' : ''}. Waiting time, traffic and extras are not included.`));
+  } else {
+    out.append(el('p', null, 'The regular-taxi per-km meter rate is not yet verified, so no total is shown. Enter your own meter rate per km above to get an estimate.'));
+  }
+  out.append(el('p', null, 'Discounts are not applied to taxi estimates. Use the meter.'));
+}
+
 function update() {
   if (!fares) return;
   const out = $('#calc-result');
   out.textContent = '';
-  const rule = ruleFor($('#calc-mode').value);
-  if (!rule) {
+  const key = $('#calc-mode').value;
+  $('#calc-taxi-field').hidden = key !== TAXI;
+  const rule = key === TAXI ? null : ruleFor(key);
+  if (key !== TAXI && !rule) {
     out.append(el('p', null, 'Rate not yet verified for this vehicle.'));
     return;
   }
@@ -155,6 +192,10 @@ function update() {
     out.append(el('p', null, 'Those two places are the same spot. Choose two different places.'));
     return;
   }
+  if (key === TAXI) {
+    taxiResult(out, km, label);
+    return;
+  }
   const discounted = document.querySelector('input[name="calc-type"]:checked').value === 'discounted';
   const r = calcFare(rule, km, discounted ? fares.discount_pct : 0, fares.rounding);
   out.append(el('p', null, `${label}: about ${km.toFixed(1)} km (estimate)`));
@@ -171,7 +212,13 @@ async function loadPoints() {
   const [pl, bus] = await Promise.all([loadPlaces(), loadBus()]);
   const list = [];
   if (pl.ok) pl.data.forEach((p) => list.push({ label: p.name, lat: p.lat, lng: p.lng }));
-  if (bus.ok) bus.data.terminals.forEach((t) => list.push({ label: t.name, lat: t.lat, lng: t.lng }));
+  if (bus.ok) {
+    bus.data.terminals.forEach((t) => list.push({ label: t.name, lat: t.lat, lng: t.lng }));
+    bus.data.routes.filter((r) => r.category === 'provincial').forEach((r) => {
+      const end = r.waypoints[r.waypoints.length - 1];
+      list.push({ label: `${r.to} (provincial)`, lat: end[0], lng: end[1] });
+    });
+  }
   list.sort((x, y) => x.label.localeCompare(y.label));
   return list;
 }
@@ -213,7 +260,7 @@ async function start(retry) {
 export function initFares() {
   if (!$('#fares-status') || !$('#fares-table') || !$('#fares-info') || !$('#fare-calc')) return;
   ['#calc-mode', '#calc-from', '#calc-to'].forEach((sel) => $(sel).addEventListener('change', update));
-  $('#calc-km').addEventListener('input', update);
+  ['#calc-km', '#calc-taxi-rate'].forEach((sel) => $(sel).addEventListener('input', update));
   document.querySelectorAll('input[name="calc-type"]').forEach((r) => r.addEventListener('change', update));
   start(false);
 }

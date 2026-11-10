@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Komyut – Metro Cebu commuter guide</title>
-<meta name="description" content="Free commuter guide for Metro Cebu: jeepney codes, bus terminals, fares and commute directions on an interactive map.">
+<meta name="description" content="Free commuter guide for Metro Cebu: jeepney codes, bus terminals, provincial buses, fares and trip planning on an interactive map.">
 <meta name="theme-color" content="#0b57d0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚌%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -41,26 +41,46 @@
         <div id="map-skeleton" class="map-skeleton" aria-hidden="true"></div>
         <p id="map-fallback" class="notice" hidden>The map could not load. Showing the route list only. Check your connection and reload.</p>
       </div>
-      <aside id="sheet" class="sheet" data-state="collapsed" aria-label="Routes and map layers">
+      <aside id="sheet" class="sheet" data-state="collapsed" aria-label="Trip planner, routes and map layers">
         <button id="sheet-handle" class="sheet-handle" type="button" aria-expanded="false" aria-controls="sheet-body">
-          <span>Routes &amp; layers</span><span class="chev" aria-hidden="true">▲</span>
+          <span>Plan, routes &amp; layers</span><span class="chev" aria-hidden="true">▲</span>
         </button>
         <div id="sheet-body" class="sheet-body">
-          <label for="search" class="sr-only">Search by code, destination or landmark</label>
-          <input id="search" type="search" placeholder="Search code, destination or landmark" autocomplete="off">
+          <details id="planner" class="planner" open>
+            <summary>Plan a trip</summary>
+            <div class="planner-body">
+              <div class="field">
+                <label for="plan-from">From</label>
+                <select id="plan-from"><option value="">Loading places…</option></select>
+              </div>
+              <div class="field">
+                <label for="plan-to">To</label>
+                <select id="plan-to"><option value="">Loading places…</option></select>
+              </div>
+              <div class="planner-actions">
+                <button id="plan-go" class="btn" type="button">Find ways to go</button>
+                <button id="plan-swap" class="btn btn--ghost" type="button">Swap</button>
+              </div>
+              <div id="plan-results" class="plan-results" role="status" aria-live="polite"></div>
+            </div>
+          </details>
+
+          <label for="search" class="sr-only">Search routes by code, destination or landmark</label>
+          <input id="search" type="search" placeholder="Search routes by code, destination or landmark" autocomplete="off">
           <fieldset class="layers">
             <legend>Show on map</legend>
             <div class="chips">
               <label class="chk"><input type="checkbox" data-layer="jeepney" checked> Jeepney</label>
-              <label class="chk"><input type="checkbox" data-layer="bus" checked> Bus</label>
+              <label class="chk"><input type="checkbox" data-layer="bus" checked> City bus</label>
+              <label class="chk"><input type="checkbox" data-layer="provincial"> Provincial bus</label>
               <label class="chk"><input type="checkbox" data-layer="terminals" checked> Terminals</label>
               <label class="chk"><input type="checkbox" data-layer="places" checked> Places</label>
             </div>
           </fieldset>
           <button id="clear-selection" class="btn" type="button" disabled>Clear selection</button>
-          <p class="hint">Routes are approximate. Confirm with the driver or barker.</p>
+          <p class="hint">Dashed lines are rough estimates. Routes are approximate. Confirm with the driver or barker.</p>
           <h3 class="list-title">Routes</h3>
-          <ul id="route-list" class="route-list"></ul>
+          <div id="route-list" class="route-lists"></div>
         </div>
       </aside>
     </div>
@@ -92,6 +112,11 @@
       <div id="bus-routes-section">
         <h3 class="section-title">City bus routes</h3>
         <ul id="bus-routes" class="cards"></ul>
+      </div>
+      <div id="bus-provincial-section">
+        <h3 class="section-title">Provincial routes from the south and north terminals</h3>
+        <p id="bus-provincial-note" class="hint"></p>
+        <ul id="bus-provincial" class="cards"></ul>
       </div>
     </div>
   </section>
@@ -131,6 +156,10 @@
           <label for="calc-km">Or enter the road distance (km)</label>
           <input id="calc-km" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Optional">
         </div>
+        <div class="field" id="calc-taxi-field" hidden>
+          <label for="calc-taxi-rate">Meter rate per km in ₱ (optional)</label>
+          <input id="calc-taxi-rate" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Enter your own rate to estimate">
+        </div>
         <fieldset class="field">
           <legend>Fare type</legend>
           <label class="chk"><input type="radio" name="calc-type" value="regular" checked> Regular</label>
@@ -148,14 +177,14 @@
     <p>Map data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap contributors</a>. Map library: <a href="https://leafletjs.com" rel="noopener">Leaflet</a>.</p>
     <div class="about">
       <h3>What this is</h3>
-      <p>Komyut is a free commuter guide for Metro Cebu: jeepney codes, bus terminals and routes, popular places with sakay directions, and fare estimates. It has no accounts, ads, cookies or analytics. Your browser does fetch the map library from cdnjs and map tiles from OpenStreetMap.</p>
+      <p>Komyut is a free commuter guide for Metro Cebu: jeepney codes, bus terminals and routes (city and provincial), popular places with sakay directions, a trip planner and fare estimates. It has no accounts, ads, cookies or analytics. Your browser does fetch the map library from cdnjs and map tiles from OpenStreetMap.</p>
       <h3>How much to trust it</h3>
       <ul class="legend">
         <li><span class="badge badge--verified">Verified (multiple sources)</span> Endpoints agree across two or more independent sources. This is not an official LTFRB check.</li>
         <li><span class="badge badge--community">Community-reported</span> Listed by one source, or the details are partly inferred.</li>
         <li><span class="badge badge--unverified">Unverified – help us confirm</span> The route or pin needs confirmation.</li>
       </ul>
-      <p>Route lines are hand-placed estimates, not surveyed. Fares are estimates; the fare guide posted inside the vehicle settles any difference.</p>
+      <p>Dashed route lines are hand-placed estimates. Solid lines have been snapped to roads. The trip planner works from these lines, so its suggestions are only as accurate as they are. Fares are estimates; the fare guide posted inside the vehicle settles any difference.</p>
       <h3>Suggest a correction</h3>
       <p>Spotted a wrong code, route, fare or pin? <a href="https://github.com/Splashzzz/Komyut/issues/new?template=route-fare-correction.yml" rel="noopener">Open a “Route/Fare correction” issue on GitHub</a> and include a source or the date you rode it. The project lives at <a href="https://github.com/Splashzzz/Komyut" rel="noopener">github.com/Splashzzz/Komyut</a>.</p>
       <h3>Data sources</h3>
@@ -171,7 +200,7 @@
 </main>
 
 <footer class="app-footer">
-  <p>Last updated: <time datetime="2026-11-02">2026-11-02</time> · Fares effective: <span id="fare-date">not loaded yet</span></p>
+  <p>Last updated: <time datetime="2026-11-03">2026-11-03</time> · Fares effective: <span id="fare-date">not loaded yet</span></p>
 </footer>
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>

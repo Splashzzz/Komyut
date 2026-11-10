@@ -1,20 +1,26 @@
-// js/map.js — Leaflet init, layers, markers, route highlight/clear. Safe if Leaflet is missing.
-// Routes:  addRoutes([{ id, label, sub, search, layer, color, latlngs, popupHtml }])
+// js/map.js — Leaflet init, layers, markers, route highlight, trip-plan drawing. Safe if Leaflet is missing.
+// Routes:  addRoutes([{ id, label, sub, search, group, layer, color, latlngs, approx, meta, popupHtml }])
 // Markers: addMarkers([{ id, layer, latlng, title, iconHtml, size, popupHtml }])
+// Events (on document): route:selected, plan:shown, selection:changed { active }
 
 export const CEBU_CENTER = [10.3157, 123.8854];
 export const DEFAULT_ZOOM = 12;
-const METRO_BOUNDS = [[10.15, 123.65], [10.65, 124.15]];
-const LAYERS = ['jeepney', 'bus', 'terminals', 'places'];
+const ISLAND_BOUNDS = [[9.3, 123.15], [11.4, 124.3]];
+const LAYERS = ['jeepney', 'bus', 'provincial', 'terminals', 'places'];
+const HIDDEN_BY_DEFAULT = ['provincial'];
+const GROUP_ORDER = ['Jeepney', 'City bus', 'Provincial bus'];
 const NORMAL = { weight: 4, opacity: 0.9 };
 const FADED = { weight: 3, opacity: 0.25 };
 const ACTIVE = { weight: 6, opacity: 1 };
 
 let map = null;
+let planGroup = null;
 const groups = {};
 const routes = new Map();
 const markers = new Map();
 let selectedId = null;
+let popupOpen = false;
+let planActive = false;
 let listEl = null;
 let query = '';
 
@@ -40,12 +46,27 @@ export function textColorFor(hex) {
 
 export const isReady = () => map !== null;
 
+function emit() {
+  const active = selectedId !== null || popupOpen || planActive;
+  document.dispatchEvent(new CustomEvent('selection:changed', { detail: { active } }));
+}
+
+// Emphasis rules: selected route stands out; a plan or selection fades the rest.
+function restyle() {
+  routes.forEach((o) => {
+    if (!o.line) return;
+    if (selectedId !== null) o.line.setStyle(o.id === selectedId ? ACTIVE : FADED);
+    else if (planActive) o.line.setStyle(FADED);
+    else o.line.setStyle(NORMAL);
+  });
+}
+
 export function initMap(el, onReady) {
   if (!el || typeof L === 'undefined') return false;
   try {
     map = L.map(el, {
-      center: CEBU_CENTER, zoom: DEFAULT_ZOOM, minZoom: 11, maxZoom: 18,
-      maxBounds: METRO_BOUNDS, maxBoundsViscosity: 0.8,
+      center: CEBU_CENTER, zoom: DEFAULT_ZOOM, minZoom: 9, maxZoom: 18,
+      maxBounds: ISLAND_BOUNDS, maxBoundsViscosity: 0.8,
     });
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -53,6 +74,14 @@ export function initMap(el, onReady) {
     }).addTo(map);
     L.control.scale({ imperial: false }).addTo(map);
     LAYERS.forEach((name) => { groups[name] = L.layerGroup().addTo(map); });
+    planGroup = L.layerGroup().addTo(map);
+    HIDDEN_BY_DEFAULT.forEach((name) => {
+      map.removeLayer(groups[name]);
+      const box = document.querySelector(`input[data-layer="${name}"]`);
+      if (box) box.checked = false;
+    });
+    map.on('popupopen', () => { popupOpen = true; emit(); });
+    map.on('popupclose', () => { popupOpen = false; emit(); });
     routes.forEach(attach);
     markers.forEach(attachMarker);
     if (typeof onReady === 'function') {
@@ -72,7 +101,9 @@ export function invalidate() {
 
 function attach(r) {
   if (!map || r.line || !groups[r.layer]) return;
-  r.line = L.polyline(r.latlngs, { color: r.color, lineJoin: 'round', ...NORMAL });
+  r.line = L.polyline(r.latlngs, {
+    color: r.color, lineJoin: 'round', dashArray: r.approx ? '8 8' : null, ...NORMAL,
+  });
   r.line.on('click', () => selectRoute(r.id));
   r.line.addTo(groups[r.layer]);
 }
@@ -89,14 +120,25 @@ export function addRoutes(items) {
     if (old && old.line && groups[old.layer]) groups[old.layer].removeLayer(old.line);
     const route = {
       id: String(r.id), label: String(r.label), sub: String(r.sub || ''), search: String(r.search || ''),
-      layer: r.layer, color: safeColor(r.color), latlngs: pts, popupHtml: r.popupHtml || '', line: null,
+      group: String(r.group || 'Routes'), layer: r.layer, color: safeColor(r.color), latlngs: pts,
+      approx: Boolean(r.approx), meta: r.meta && typeof r.meta === 'object' ? r.meta : {},
+      popupHtml: r.popupHtml || '', line: null,
     };
     routes.set(route.id, route);
     attach(route);
     added += 1;
   });
   renderList();
+  restyle();
   return added;
+}
+
+// Read-only copy of the registered routes (used by the trip planner).
+export function getRoutes() {
+  return [...routes.values()].map((r) => ({
+    id: r.id, label: r.label, sub: r.sub, layer: r.layer, color: r.color,
+    latlngs: r.latlngs, approx: r.approx, meta: r.meta,
+  }));
 }
 
 export function setLayerVisible(name, visible) {
@@ -109,14 +151,18 @@ export function setLayerVisible(name, visible) {
   if (!visible && sel && sel.layer === name) clearSelection();
 }
 
+function clearPlanLayer() {
+  if (planGroup) planGroup.clearLayers();
+  planActive = false;
+}
+
 export function selectRoute(id) {
   const r = routes.get(id);
   if (!r) return;
+  clearPlanLayer();
   selectedId = id;
   setLayerVisible(r.layer, true);
-  routes.forEach((o) => {
-    if (o.line) o.line.setStyle(o.id === id ? ACTIVE : FADED);
-  });
+  restyle();
   if (map && r.line) {
     r.line.bringToFront();
     map.fitBounds(r.line.getBounds(), { padding: [48, 48], animate: false });
@@ -126,19 +172,61 @@ export function selectRoute(id) {
       .openOn(map);
   }
   renderList();
+  emit();
   document.dispatchEvent(new CustomEvent('route:selected', { detail: { id } }));
 }
 
+// Clears everything the user has opened: selected route, popups, trip plan drawing.
 export function clearSelection() {
-  const had = selectedId !== null;
+  const had = selectedId !== null || planActive || popupOpen;
   selectedId = null;
-  routes.forEach((o) => { if (o.line) o.line.setStyle(NORMAL); });
+  clearPlanLayer();
+  restyle();
   if (map) {
     map.closePopup();
     if (had) map.setView(CEBU_CENTER, DEFAULT_ZOOM, { animate: false });
   }
   renderList();
-  document.dispatchEvent(new CustomEvent('route:cleared'));
+  emit();
+}
+
+// plan: { legs: [{ latlngs, color, label }], walks: [latlngs], from: { latlng, label }, to: { latlng, label } }
+export function showPlan(plan, opts = {}) {
+  if (!map || !planGroup || !plan) return false;
+  clearPlanLayer();
+  selectedId = null;
+  map.closePopup();
+  const bounds = [];
+  (plan.walks || []).forEach((pts) => {
+    if (!Array.isArray(pts) || pts.length < 2) return;
+    L.polyline(pts, { color: '#455a64', weight: 4, opacity: 0.9, dashArray: '2 8', lineCap: 'round' }).addTo(planGroup);
+    bounds.push(...pts);
+  });
+  (plan.legs || []).forEach((leg) => {
+    if (!leg || !Array.isArray(leg.latlngs) || leg.latlngs.length < 2) return;
+    L.polyline(leg.latlngs, { color: '#ffffff', weight: 12, opacity: 0.9, lineJoin: 'round' }).addTo(planGroup);
+    const line = L.polyline(leg.latlngs, { color: safeColor(leg.color), weight: 7, opacity: 1, lineJoin: 'round' });
+    if (leg.label) line.bindTooltip(String(leg.label), { sticky: true });
+    line.addTo(planGroup);
+    bounds.push(...leg.latlngs);
+  });
+  [[plan.from, 'A'], [plan.to, 'B']].forEach(([end, text]) => {
+    if (!end || !Array.isArray(end.latlng)) return;
+    const name = `${text}: ${end.label || ''}`.trim();
+    const icon = L.divIcon({
+      className: 'pin pin--plan', html: `<span aria-hidden="true" style="width:34px;height:34px;font-size:16px">${text}</span>`,
+      iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -17],
+    });
+    L.marker(end.latlng, { icon, title: name, alt: name, keyboard: true }).bindPopup(escapeHtml(name)).addTo(planGroup);
+    bounds.push(end.latlng);
+  });
+  planActive = true;
+  restyle();
+  if (bounds.length > 1) map.fitBounds(L.latLngBounds(bounds), { padding: [48, 48], animate: false });
+  renderList();
+  emit();
+  if (opts.collapse) document.dispatchEvent(new CustomEvent('plan:shown'));
+  return true;
 }
 
 export function setQuery(q) {
@@ -156,40 +244,51 @@ export function bindList(el) {
   renderList();
 }
 
+function mk(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+
 export function renderList() {
   if (!listEl) return;
   const active = document.activeElement;
   const keepId = active && listEl.contains(active) && active.dataset ? active.dataset.id : null;
   const rows = [...routes.values()].filter((r) => (
-    !query || `${r.label} ${r.sub} ${r.search} ${r.layer}`.toLowerCase().includes(query)
+    !query || `${r.label} ${r.sub} ${r.search} ${r.group}`.toLowerCase().includes(query)
   ));
   listEl.textContent = '';
   if (rows.length === 0) {
-    const li = document.createElement('li');
-    li.className = 'empty';
-    li.textContent = routes.size === 0
-      ? 'No routes loaded yet.'
-      : `No routes match “${query}”.`;
-    listEl.append(li);
+    listEl.append(mk('p', 'empty', routes.size === 0 ? 'No routes loaded yet.' : `No routes match “${query}”.`));
     return;
   }
+  const byGroup = new Map();
   rows.forEach((r) => {
-    const li = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'route-btn';
-    btn.dataset.id = r.id;
-    btn.setAttribute('aria-pressed', String(r.id === selectedId));
-    const pill = document.createElement('span');
-    pill.className = 'pill';
-    pill.textContent = r.label;
-    pill.style.background = r.color;
-    pill.style.color = textColorFor(r.color);
-    const sub = document.createElement('span');
-    sub.textContent = r.sub;
-    btn.append(pill, sub);
-    li.append(btn);
-    listEl.append(li);
+    if (!byGroup.has(r.group)) byGroup.set(r.group, []);
+    byGroup.get(r.group).push(r);
+  });
+  const rank = (g) => (GROUP_ORDER.indexOf(g) < 0 ? 99 : GROUP_ORDER.indexOf(g));
+  [...byGroup.keys()].sort((a, b) => rank(a) - rank(b)).forEach((name) => {
+    const list = byGroup.get(name).sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
+    const wrap = mk('div', 'route-group');
+    wrap.append(mk('h4', 'group-title', `${name} (${list.length})`));
+    const ul = mk('ul', 'route-list');
+    list.forEach((r) => {
+      const li = mk('li');
+      const btn = mk('button', 'route-btn');
+      btn.type = 'button';
+      btn.dataset.id = r.id;
+      btn.setAttribute('aria-pressed', String(r.id === selectedId));
+      const pill = mk('span', 'pill', r.label);
+      pill.style.background = r.color;
+      pill.style.color = textColorFor(r.color);
+      btn.append(pill, mk('span', null, r.sub));
+      li.append(btn);
+      ul.append(li);
+    });
+    wrap.append(ul);
+    listEl.append(wrap);
   });
   if (keepId) {
     const again = listEl.querySelector(`[data-id="${CSS.escape(keepId)}"]`);
@@ -236,7 +335,7 @@ export function addMarkers(items) {
 export function showMarker(id) {
   const m = markers.get(id);
   if (!m) return;
-  if (selectedId !== null) clearSelection();
+  if (selectedId !== null || planActive) clearSelection();
   setLayerVisible(m.layer, true);
   if (map && m.marker) {
     map.setView(m.latlng, 15, { animate: false });

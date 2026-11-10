@@ -12,7 +12,7 @@
 </head>
 <body>
 <h1>Komyut diagnostics</h1>
-<p>Wait for “DONE”, then tap Copy report and paste it into the chat.</p>
+<p>Wait for “DONE”, then tap Copy report and paste it into the chat. You can delete this file when the site works.</p>
 <button id="copy" type="button">Copy report</button>
 <pre id="out">Running…</pre>
 <script>
@@ -32,13 +32,12 @@
   });
 
   const FILES = [
-    ['index.html', 1, 'html'], ['css/styles.css', 1, 'css'],
-    ['js/app.js', 1, 'js'], ['js/map.js', 1, 'js'],
-    ['js/data.js', 2, 'js'], ['js/jeepney.js', 2, 'js'], ['data/jeepney.json', 2, 'json'],
-    ['js/bus.js', 3, 'js'], ['data/bus.json', 3, 'json'],
-    ['js/places.js', 4, 'js'], ['data/places.json', 4, 'json'], ['data/places-2.json', 4, 'json'],
-    ['js/fares.js', 5, 'js'], ['data/fares.json', 5, 'json'],
-    ['data/jeepney-2.json', 6, 'json'],
+    ['index.html', 'html'], ['css/styles.css', 'css'],
+    ['js/app.js', 'js'], ['js/map.js', 'js'], ['js/data.js', 'js'], ['js/jeepney.js', 'js'], ['js/bus.js', 'js'],
+    ['js/places.js', 'js'], ['js/fares.js', 'js'], ['js/plan.js', 'js'],
+    ['data/jeepney.json', 'json'], ['data/jeepney-2.json', 'json'], ['data/bus.json', 'json'],
+    ['data/bus-provincial.json', 'json'], ['data/places.json', 'json'], ['data/places-2.json', 'json'],
+    ['data/fares.json', 'json'], ['data/paths.json', 'json'],
   ];
 
   async function get(path) {
@@ -61,26 +60,15 @@
   }
 
   log('URL: ' + location.href);
-  log('Base path: ' + base);
   log('UA: ' + navigator.userAgent);
-  try {
-    const regs = await navigator.serviceWorker.getRegistrations();
-    log('Service workers registered: ' + regs.length);
-  } catch (e) {
-    log('Service workers: n/a');
-  }
   log('');
 
   let indexText = '';
-  for (const [path, phase, kind] of FILES) {
+  for (const [path, kind] of FILES) {
     const r = await get(path);
     if (path === 'index.html') indexText = r.text;
-    const size = r.text.length + ' B';
+    if (r.status !== 200) { log(`[MISSING] ${path}  status ${r.status}`); continue; }
     let note = '';
-    if (r.status !== 200) {
-      log(`[MISSING] ${path} (phase ${phase})  status ${r.status}`);
-      continue;
-    }
     if (kind === 'js') {
       if (!/javascript/i.test(r.type)) note += `  WRONG TYPE: ${r.type}`;
       if (/^\s*</.test(r.text)) note += '  LOOKS LIKE HTML, NOT JS';
@@ -89,7 +77,7 @@
       try { JSON.parse(r.text); note += '  json: ok'; }
       catch (e) { note += '  JSON ERROR: ' + e.message; }
     }
-    log(`[found] ${path} (phase ${phase})  ${r.status}  ${size}${note}`);
+    log(`[found] ${path}  ${r.status}  ${r.text.length} B${note}`);
   }
 
   log('');
@@ -98,10 +86,10 @@
     const refs = [...doc.querySelectorAll('script[src],link[href]')].map((n) => n.getAttribute('src') || n.getAttribute('href'));
     log('index.html references: ' + refs.join(', '));
     const need = ['panel-map', 'map-canvas', 'map-skeleton', 'map-fallback', 'sheet', 'sheet-handle', 'sheet-body',
-      'search', 'clear-selection', 'route-list', 'toast',
+      'search', 'clear-selection', 'route-list', 'toast', 'planner', 'plan-from', 'plan-to', 'plan-go', 'plan-swap', 'plan-results',
       'tab-map', 'tab-jeepney', 'tab-bus', 'tab-places', 'tab-fares', 'tab-about',
       'panel-jeepney', 'panel-bus', 'panel-places', 'panel-fares', 'panel-about',
-      'h-map', 'h-jeepney', 'h-bus', 'h-places', 'h-fares', 'h-about'];
+      'bus-provincial', 'bus-provincial-section', 'bus-provincial-note', 'calc-taxi-field', 'calc-taxi-rate'];
     const missing = need.filter((id) => !doc.getElementById(id));
     log('Missing ids in index.html: ' + (missing.length ? missing.join(', ') : 'none'));
   } else {

@@ -1,11 +1,12 @@
-// js/bus.js — Bus tab: terminals + city bus routes; feeds the Terminals and Bus map layers.
-import { loadBus, confidenceInfo, busMinFare, faresReady } from './data.js';
+// js/bus.js — Bus tab: terminals, city routes and provincial routes; feeds the map layers.
+import { loadBus, confidenceInfo, busMinFare, faresReady, pathsReady } from './data.js';
 import * as MapView from './map.js';
 
 const $ = (sel) => document.querySelector(sel);
 const esc = MapView.escapeHtml;
 const TYPE_LABELS = { aircon: 'Aircon', ordinary: 'Ordinary' };
 let data = { terminals: [], routes: [] };
+let provincialNote = '';
 
 function el(tag, cls, text) {
   const n = document.createElement(tag);
@@ -14,9 +15,11 @@ function el(tag, cls, text) {
   return n;
 }
 
-const typeLabel = (t) => TYPE_LABELS[t] || 'Bus type not confirmed';
+const isProvincial = (r) => r.category === 'provincial';
+const typeLabel = (r) => TYPE_LABELS[r.busType] || (isProvincial(r) ? 'Bus class varies by operator' : 'Bus type not confirmed');
 
 function fareText(r) {
+  if (isProvincial(r)) return 'Depends on bus class (see the provincial fare note)';
   const fare = busMinFare(r.busType);
   return fare === null ? 'Rate not yet verified' : `₱${fare} (LTFRB city-bus rate; operator may differ)`;
 }
@@ -34,16 +37,17 @@ function terminalPopup(t) {
   </div>`;
 }
 
-function routePopup(r) {
+function routePopup(r, approx) {
   const info = confidenceInfo(r.confidence);
   const via = r.via.length ? `<div>Via: ${r.via.map(esc).join(', ')}</div>` : '';
+  const line = approx ? 'Dashed line: rough estimate, not snapped to roads.' : 'Line snapped to roads.';
   return `<div class="popup">
     <span class="pill" style="background:${r.color};color:${MapView.textColorFor(r.color)}">${esc(r.id)}</span>
     <strong>${esc(r.operator || 'Bus')}</strong>
     <div>${esc(r.from)} → ${esc(r.to)}</div>${via}
-    <div>${esc(typeLabel(r.busType))} · Min. fare: ${esc(fareText(r))}</div>
+    <div>${esc(typeLabel(r))} · Min. fare: ${esc(fareText(r))}</div>
     <span class="badge ${info.cls}">${esc(info.label)}</span>
-    <div class="popup-note">Routes are approximate. Confirm with the driver or barker.</div>
+    <div class="popup-note">${line} Routes are approximate. Confirm with the driver or barker.</div>
   </div>`;
 }
 
@@ -79,7 +83,7 @@ function routeCard(r) {
   pill.style.color = MapView.textColorFor(r.color);
   head.append(pill, el('h4', 'card-title', `${r.from} → ${r.to}`));
   li.append(head);
-  li.append(el('p', 'card-meta', [r.operator, typeLabel(r.busType)].filter(Boolean).join(' · ')));
+  li.append(el('p', 'card-meta', [r.operator, typeLabel(r)].filter(Boolean).join(' · ')));
   if (r.via.length) li.append(el('p', 'card-meta', `Via: ${r.via.join(', ')}`));
   li.append(el('p', 'card-meta', `Min. fare: ${fareText(r)} · ${timeText(r)}`));
   if (r.notes) li.append(el('p', 'card-meta', r.notes));
@@ -99,14 +103,21 @@ function note(msg) {
 function render() {
   const tl = $('#bus-terminals');
   const rl = $('#bus-routes');
+  const pl = $('#bus-provincial');
   tl.textContent = '';
   rl.textContent = '';
+  pl.textContent = '';
+  const city = data.routes.filter((r) => !isProvincial(r));
+  const prov = data.routes.filter(isProvincial).sort((a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to));
   data.terminals.forEach((t) => tl.append(terminalCard(t)));
-  data.routes.forEach((r) => rl.append(routeCard(r)));
+  city.forEach((r) => rl.append(routeCard(r)));
+  prov.forEach((r) => pl.append(routeCard(r)));
   if (data.terminals.length === 0) tl.append(note('No terminals available yet.'));
-  if (data.routes.length === 0) rl.append(note('No bus routes available yet.'));
+  if (city.length === 0) rl.append(note('No city bus routes available yet.'));
   $('#bus-routes-section').hidden = false;
-  $('#bus-status').textContent = `${data.terminals.length} terminals · ${data.routes.length} routes`;
+  $('#bus-provincial-section').hidden = prov.length === 0;
+  $('#bus-provincial-note').textContent = provincialNote;
+  $('#bus-status').textContent = `${data.terminals.length} terminals · ${city.length} city routes · ${prov.length} provincial routes`;
 }
 
 function showSkeleton() {
@@ -115,7 +126,9 @@ function showSkeleton() {
     list.textContent = '';
     for (let i = 0; i < 2; i += 1) list.append(el('li', 'card skeleton-card'));
   });
+  $('#bus-provincial').textContent = '';
   $('#bus-routes-section').hidden = false;
+  $('#bus-provincial-section').hidden = true;
   $('#bus-status').textContent = 'Loading bus data…';
 }
 
@@ -131,17 +144,19 @@ function showError() {
   list.append(li);
   $('#bus-routes').textContent = '';
   $('#bus-routes-section').hidden = true;
+  $('#bus-provincial-section').hidden = true;
   $('#bus-status').textContent = '';
 }
 
 async function load() {
   showSkeleton();
-  const [res] = await Promise.all([loadBus(), faresReady]);
+  const [res, faresRes, paths] = await Promise.all([loadBus(), faresReady, pathsReady]);
   if (!res.ok) {
     showError();
     return;
   }
   data = res.data;
+  provincialNote = faresRes && faresRes.ok && faresRes.data ? faresRes.data.provincial_note : '';
   try {
     MapView.addMarkers(data.terminals.map((t) => ({
       id: `terminal:${t.id}`,
@@ -151,16 +166,24 @@ async function load() {
       iconHtml: '🚌',
       popupHtml: terminalPopup(t),
     })));
-    MapView.addRoutes(data.routes.map((r) => ({
-      id: `bus:${r.id}`,
-      label: r.id,
-      sub: `${r.from} → ${r.to}`,
-      search: [r.operator, r.via.join(' ')].join(' '),
-      layer: 'bus',
-      color: r.color,
-      latlngs: r.waypoints,
-      popupHtml: routePopup(r),
-    })));
+    MapView.addRoutes(data.routes.map((r) => {
+      const snapped = paths[`bus:${r.id}`];
+      return {
+        id: `bus:${r.id}`,
+        label: r.id,
+        sub: `${r.from} → ${r.to}`,
+        search: [r.operator, r.via.join(' ')].join(' '),
+        group: isProvincial(r) ? 'Provincial bus' : 'City bus',
+        layer: isProvincial(r) ? 'provincial' : 'bus',
+        color: r.color,
+        latlngs: snapped || r.waypoints,
+        approx: !snapped,
+        meta: {
+          kind: 'bus', provincial: isProvincial(r), busType: r.busType, name: r.operator, from: r.from, to: r.to, via: r.via,
+        },
+        popupHtml: routePopup(r, !snapped),
+      };
+    }));
   } catch (err) {
     // Map layers are optional; the tab still works without them.
   }
@@ -182,14 +205,17 @@ function wire() {
     const btn = e.target.closest('[data-terminal]');
     if (btn) goToMap(() => MapView.showMarker(`terminal:${btn.dataset.terminal}`));
   });
-  $('#bus-routes').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-route]');
-    if (btn) goToMap(() => MapView.selectRoute(`bus:${btn.dataset.route}`));
+  ['#bus-routes', '#bus-provincial'].forEach((sel) => {
+    $(sel).addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-route]');
+      if (btn) goToMap(() => MapView.selectRoute(`bus:${btn.dataset.route}`));
+    });
   });
 }
 
 export function initBus() {
-  if (!$('#bus-terminals') || !$('#bus-routes') || !$('#bus-routes-section') || !$('#bus-status')) return;
+  const ids = ['#bus-terminals', '#bus-routes', '#bus-routes-section', '#bus-provincial', '#bus-provincial-section', '#bus-provincial-note', '#bus-status'];
+  if (ids.some((sel) => !$(sel))) return;
   wire();
   load();
 }

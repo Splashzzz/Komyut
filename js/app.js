@@ -71,6 +71,15 @@ function showTab(name, moveFocus) {
   }
 }
 
+// On phones the bottom sheet covers the map; fold it away when something is drawn on the map.
+function collapseSheetOnMobile() {
+  const wasOpen = $('#sheet').dataset.state === 'expanded';
+  if (mobileQuery.matches && wasOpen && !$('#panel-map').classList.contains('no-map')) {
+    setSheet(false);
+    $('#sheet-handle').focus();
+  }
+}
+
 function wireControls() {
   MapView.bindList($('#route-list'));
   $('#search').addEventListener('input', (e) => MapView.setQuery(e.target.value));
@@ -80,15 +89,9 @@ function wireControls() {
   const clearBtn = $('#clear-selection');
   clearBtn.addEventListener('click', () => MapView.clearSelection());
   $('#sheet-handle').addEventListener('click', () => setSheet($('#sheet').dataset.state !== 'expanded'));
-  document.addEventListener('route:selected', () => {
-    clearBtn.disabled = false;
-    const wasOpen = $('#sheet').dataset.state === 'expanded';
-    if (mobileQuery.matches && wasOpen && !$('#panel-map').classList.contains('no-map')) {
-      setSheet(false);
-      $('#sheet-handle').focus();
-    }
-  });
-  document.addEventListener('route:cleared', () => { clearBtn.disabled = true; });
+  document.addEventListener('route:selected', collapseSheetOnMobile);
+  document.addEventListener('plan:shown', collapseSheetOnMobile);
+  document.addEventListener('selection:changed', (e) => { clearBtn.disabled = !(e.detail && e.detail.active); });
 }
 
 function init() {
@@ -107,6 +110,9 @@ function init() {
   import('./fares.js')
     .then((m) => m.initFares())
     .catch(() => showToast('The Fares tab could not start. Other tabs still work.'));
+  import('./plan.js')
+    .then((m) => m.initPlan())
+    .catch(() => showToast('The trip planner could not start. Other features still work.'));
 }
 
 window.addEventListener('error', () => showToast('Something went wrong. Other tabs still work.'));

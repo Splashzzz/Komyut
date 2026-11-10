@@ -1,7 +1,7 @@
 {
   "effective_date": "2026-09-28",
   "source_note": "LTFRB fare matrices effective 28 September 2026. The jeepney increase was first approved in March 2026, suspended, then allowed to take effect after DOTr lifted the suspension on 26 September. Verify with LTFRB-7 or the fare guide posted inside the vehicle.",
-  "checked_on": "2026-11-02",
+  "checked_on": "2026-11-03",
   "jeepney_traditional": { "min_fare": 14, "min_km": 4, "per_km": 2 },
   "jeepney_modern": { "min_fare": 17, "min_km": 4, "per_km": 2.4 },
   "discount_pct": 20,
@@ -11,6 +11,15 @@
     "aircon": { "min_fare": 18, "min_km": 5, "per_km": 2.98 }
   },
   "bus_note": "Bus figures are the LTFRB city-bus matrix (first 5 km). Premium or point-to-point services, including some MyBus runs, may charge differently; confirm with the operator.",
+  "provincial_bus": {
+    "ordinary": { "min_fare": 12, "min_km": 5, "per_km": 2.2 }
+  },
+  "provincial_note": "Provincial bus fares depend on the bus class. Ordinary: ₱12 for the first 5 km plus ₱2.20 per km. Per succeeding km for other classes: aircon ₱2.45, deluxe ₱2.60, super deluxe ₱2.70, luxury ₱3.35 (minimum fares for these classes are not verified, so only ordinary appears in the calculator).",
+  "taxi": {
+    "flag_down": 65,
+    "per_km": null,
+    "note": "Provisional LTFRB flag-down for regular taxis; the per-km and waiting-time meter rates are not yet verified."
+  },
   "rounding": {
     "step": 0.25,
     "mode": "nearest",
@@ -20,7 +29,7 @@
     "road_factor": 1.3,
     "note": "Straight-line (Haversine) distance multiplied by 1.3 to approximate road distance."
   },
-  "taxi_note": "Regular taxis use the meter. The provisional flag-down posted by LTFRB is ₱65 (up from ₱50); the petition was still pending on 29 September 2026. Ride-hailing sedan bookings start at ₱65.",
+  "taxi_note": "Regular taxis use the meter. LTFRB's provisional flag-down for regular taxis is ₱65 (up from ₱50); the petition was still pending on 29 September 2026. Ride-hailing sedan bookings start at ₱65.",
   "tricycle_note": "Fares are locally negotiated; no fixed rate.",
   "habal_note": "Motorcycle rides (habal-habal) are negotiated; agree on the fare before riding."
 }
